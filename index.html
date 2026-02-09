@@ -220,6 +220,11 @@ body {
 
 .activity-card.transport-card { background: rgba(110,181,255,0.04); border-color: rgba(110,181,255,0.1); }
 .activity-card.transport-card::before { background: var(--accent-3); }
+.transport-card .route-steps { direction: ltr; text-align: left; list-style: none; padding: 0; margin: 6px 0 0; display: flex; flex-direction: column; gap: 4px; }
+.transport-card .route-step { display: flex; align-items: baseline; gap: 8px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+.transport-card .route-step .step-icon { color: var(--accent-3); font-size: 0.7rem; flex-shrink: 0; margin-top: 2px; }
+.transport-card .route-step .step-text { flex: 1; }
+.transport-card .route-step .step-duration { color: rgba(110,181,255,0.6); font-size: 0.78rem; white-space: nowrap; }
 .activity-card.hotel-card { background: rgba(212,168,83,0.04); border-color: rgba(212,168,83,0.1); }
 .activity-card.hotel-card::before { background: var(--accent-2); }
 
@@ -482,7 +487,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1721141025940-178650e08b4b?w=800&q=80" alt="רחוב ניקאמיסה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1601376754000-117ee1af7db2?w=800&q=80" alt="רחוב ניקאמיסה">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">10:30</div>
@@ -495,7 +500,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1662406009228-b270717e296f?w=800&q=80" alt="פארק אואנו">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/1/18/Ueno_park.jpg" alt="פארק אואנו">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">13:30</div>
@@ -531,7 +536,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1593343983283-eeb6bf18cc85?w=800&q=80" alt="שדרות אומוטסנדו">
+            <img class="activity-img" loading="lazy" src="https://cdn.cheapoguides.com/wp-content/uploads/sites/2/2017/05/omohara-building-omotesando-iStock-1140617218-1024x600.jpg" alt="שדרות אומוטסנדו">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">11:00</div>
@@ -603,8 +608,11 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 11:00</div>
-          <div class="activity-name">נסיעה לקאמאקורה + מקדש צורוגאוקה האצ׳ימנגו</div>
-          <div class="activity-desc">JR Yokosuka Line מ-Shinagawa (~55 דק׳). יציאה ~09:30</div>
+          <div class="activity-name">Travel to Kamakura</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shinagawa → Kamakura — JR Yokosuka Line</span><span class="step-duration">~55 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Depart by 09:30, arrive ~11:00</span></div>
+          </div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-2" data-animate>
@@ -624,8 +632,10 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 17:00</div>
-          <div class="activity-name">חזרה לטוקיו</div>
-          <div class="activity-desc">רכבת JR (קו יוקוסוקה)</div>
+          <div class="activity-name">Return to Tokyo</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kamakura → Shinagawa — JR Yokosuka Line</span><span class="step-duration">~55 min</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -656,8 +666,11 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 10:00</div>
-          <div class="activity-name">צ׳ק אאוט טוקיו, נסיעה להאקונה</div>
-          <div class="activity-desc">Odakyu Romancecar מ-Shinjuku (~85 דק׳) ← הגעה ~11:45</div>
+          <div class="activity-name">Check-out Tokyo → Hakone</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shinjuku → Hakone-Yumoto — Odakyu Romancecar</span><span class="step-duration">~85 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Arrive ~11:45</span></div>
+          </div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-2" data-animate>
@@ -715,8 +728,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 09:00</div>
-          <div class="activity-name">צ׳ק אאוט מהאקונה ונסיעה לקיוטו</div>
-          <div class="activity-desc">אוטובוס/רכבת ל-Odawara (~30 דק׳) ← Shinkansen Hikari ל-Kyoto (~2 שעות) + Takyubin</div>
+          <div class="activity-name">Check-out Hakone → Kyoto</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Hakone → Odawara — Bus/Train</span><span class="step-duration">~30 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Odawara → Kyoto — Shinkansen Hikari</span><span class="step-duration">~2 hrs</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Send luggage ahead via Takyubin</span></div>
+          </div>
         </div>
       </div>
       <div class="timeline-item hotel stagger-2" data-animate>
@@ -724,7 +741,9 @@ body {
         <div class="activity-card hotel-card">
           <div class="activity-time">13:00</div>
           <div class="activity-name">צ׳ק אין בקיוטו</div>
-          <div class="activity-desc">הגעה ל-Kyoto Station ← מונית/אוטובוס למלון (~15 דק׳)</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kyoto Station → Hotel — Taxi/Bus</span><span class="step-duration">~15 min</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -741,7 +760,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80" alt="קיומיזו-דרה">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Kiyomizu.jpg" alt="קיומיזו-דרה">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">08:00</div>
@@ -754,7 +773,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1637679108655-429fabeb2d4a?w=800&q=80" alt="ניננזאקה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80" alt="ניננזאקה">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">10:00</div>
@@ -790,7 +809,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=800&q=80" alt="יער הבמבוק">
+            <img class="activity-img" loading="lazy" src="https://cdn.eureka.org.il/images/w400/8482934015.jpg" alt="יער הבמבוק">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">09:00</div>
@@ -854,8 +873,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 09:00</div>
-          <div class="activity-name">☀️ צ׳ק אאוט קיוטו ונסיעה לקנזאווה</div>
-          <div class="activity-desc">Thunderbird ל-Tsuruga (~80 דק׳) ← Hokuriku Shinkansen ל-Kanazawa (~45 דק׳). סה״כ ~2.5 שעות</div>
+          <div class="activity-name">☀️ Check-out Kyoto → Kanazawa</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kyoto → Tsuruga — Limited Express Thunderbird</span><span class="step-duration">~80 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Tsuruga → Kanazawa — Hokuriku Shinkansen</span><span class="step-duration">~45 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Total travel time ~2.5 hrs</span></div>
+          </div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-2" data-animate>
@@ -875,7 +898,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1699360447407-2fe90db0f1de?w=800&q=80" alt="רובע הסמוראי נגמאצ׳י">
+            <img class="activity-img" loading="lazy" src="https://cdn.getyourguide.com/image/format=auto,dpr=2/tour_img/4a53d9a6f695f9d3.jpeg" alt="רובע הסמוראי נגמאצ׳י">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">14:00</div>
@@ -938,15 +961,17 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚌 08:30</div>
-          <div class="activity-name">צ׳ק אאוט קנזאווה ← שיראקאווה-גו</div>
-          <div class="activity-desc">אוטובוס Nohi (~1:15 שעות)</div>
+          <div class="activity-name">Check-out Kanazawa → Shirakawa-go</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kanazawa → Shirakawa-go — Nohi Bus</span><span class="step-duration">~1 hr 15 min</span></div>
+          </div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-2" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1579783483458-83d02161294e?w=800&q=80" alt="כפר שיראקאווה-גו">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/SHIRAKAWA_GOU.JPG" alt="כפר שיראקאווה-גו">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">10:00</div>
@@ -959,8 +984,10 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚌 12:00</div>
-          <div class="activity-name">שיראקאווה-גו ← טקיאמה</div>
-          <div class="activity-desc">אוטובוס Nohi (~50 דקות)</div>
+          <div class="activity-name">Shirakawa-go → Takayama</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shirakawa-go → Takayama — Nohi Bus</span><span class="step-duration">~50 min</span></div>
+          </div>
         </div>
       </div>
       <div class="timeline-item stagger-4" data-animate>
@@ -988,7 +1015,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1598197748967-b4674cb3c266?w=800&q=80" alt="יאטאי קאיקאן">
+            <img class="activity-img" loading="lazy" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/19/78/59/be/caption.jpg?w=900&h=500&s=1" alt="יאטאי קאיקאן">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">16:00</div>
@@ -1024,8 +1051,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 10:00</div>
-          <div class="activity-name">צ׳ק אאוט טקיאמה ← נאגויה ← אוסקה</div>
-          <div class="activity-desc">JR Hida ל-Nagoya (~2:15) ← Tokaido Shinkansen ל-Shin-Osaka (~50 דק׳) ← מטרו Midosuji ל-Namba (~10 דק׳)</div>
+          <div class="activity-name">Check-out Takayama → Osaka</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Takayama → Nagoya — JR Wide View Hida</span><span class="step-duration">~2 hrs 15 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Nagoya → Shin-Osaka — Tokaido Shinkansen</span><span class="step-duration">~50 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shin-Osaka → Namba — Midosuji Metro Line</span><span class="step-duration">~10 min</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1084,8 +1115,11 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 08:00</div>
-          <div class="activity-name">טיול יום להירושימה ומייג׳ימה</div>
-          <div class="activity-desc">מטרו Midosuji ל-Shin-Osaka ← Sanyo Shinkansen ל-Hiroshima (~1:20)</div>
+          <div class="activity-name">Day Trip: Hiroshima & Miyajima</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Namba → Shin-Osaka — Midosuji Metro Line</span><span class="step-duration">~10 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shin-Osaka → Hiroshima — Sanyo Shinkansen</span><span class="step-duration">~1 hr 20 min</span></div>
+          </div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-2" data-animate>
@@ -1118,8 +1152,11 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 18:00</div>
-          <div class="activity-name">חזרה לאוסקה</div>
-          <div class="activity-desc">Sanyo Shinkansen ל-Shin-Osaka ← מטרו Midosuji ל-Namba</div>
+          <div class="activity-name">Return to Osaka</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Hiroshima → Shin-Osaka — Sanyo Shinkansen</span><span class="step-duration">~1 hr 20 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shin-Osaka → Namba — Midosuji Metro Line</span><span class="step-duration">~10 min</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1136,8 +1173,10 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 09:00</div>
-          <div class="activity-name">🦌 טיול יום לנארה</div>
-          <div class="activity-desc">רכבת Kintetsu (~35 דקות מנמבה)</div>
+          <div class="activity-name">🦌 Day Trip: Nara</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Osaka-Namba → Kintetsu-Nara — Kintetsu Railway</span><span class="step-duration">~35 min</span></div>
+          </div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-2" data-animate>
@@ -1170,8 +1209,10 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">14:00</div>
-          <div class="activity-name">חזרה לאוסקה</div>
-          <div class="activity-desc">רכבת Kintetsu</div>
+          <div class="activity-name">Return to Osaka</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kintetsu-Nara → Osaka-Namba — Kintetsu Railway</span><span class="step-duration">~35 min</span></div>
+          </div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-5" data-animate>
@@ -1217,8 +1258,13 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 16:00</div>
-          <div class="activity-name">איסוף מזוודות ונסיעה לטוקיו</div>
-          <div class="activity-desc">איסוף מזוודות מלובי ← מטרו ל-Shin-Osaka ← Tokaido Shinkansen ל-Shinagawa (~2:20). הגעה ~19:00</div>
+          <div class="activity-name">Osaka → Tokyo</div>
+          <div class="route-steps">
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Pick up luggage from hotel lobby</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Namba → Shin-Osaka — Midosuji Metro Line</span><span class="step-duration">~10 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shin-Osaka → Shinagawa — Tokaido Shinkansen</span><span class="step-duration">~2 hrs 20 min</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Arrive ~19:00</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1272,8 +1318,15 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">✈️ 17:00</div>
-          <div class="activity-name">טיסה לארץ</div>
-          <div class="activity-desc">אם טסים מ-Haneda: Keikyu/Monorail (~20 דק׳). אם טסים מ-Kansai: Shinkansen ל-Shin-Osaka (~2:20) + Haruka Express ל-KIX (~75 דק׳) — יציאה מטוקיו עד 11:00</div>
+          <div class="activity-name">Flight Home</div>
+          <div class="route-steps">
+            <div class="route-step" style="font-weight:600;color:var(--text-primary)"><span class="step-icon">▶</span><span class="step-text">Option A — From Haneda (HND)</span></div>
+            <div class="route-step" style="padding-left:20px"><span class="step-icon">·</span><span class="step-text">Shinagawa → Haneda — Keikyu Line / Monorail</span><span class="step-duration">~20 min</span></div>
+            <div class="route-step" style="font-weight:600;color:var(--text-primary);margin-top:4px"><span class="step-icon">▶</span><span class="step-text">Option B — From Kansai (KIX)</span></div>
+            <div class="route-step" style="padding-left:20px"><span class="step-icon">·</span><span class="step-text">Tokyo → Shin-Osaka — Tokaido Shinkansen</span><span class="step-duration">~2 hrs 20 min</span></div>
+            <div class="route-step" style="padding-left:20px"><span class="step-icon">·</span><span class="step-text">Shin-Osaka → Kansai Airport — Haruka Express</span><span class="step-duration">~75 min</span></div>
+            <div class="route-step" style="padding-left:20px"><span class="step-icon">·</span><span class="step-text">Must leave Tokyo by 11:00</span></div>
+          </div>
         </div>
       </div>
     </div>
