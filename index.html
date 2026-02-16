@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#050505">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇯🇵</text></svg>">
@@ -13,30 +13,33 @@
    CSS CUSTOM PROPERTIES
    ═══════════════════════════════════════════════ */
 :root {
-  --bg: #0a0a0a;
-  --bg-card: #161616;
-  --bg-card-hover: #1c1c1e;
-  --bg-glass: rgba(22, 22, 22, 0.72);
-  --bg-skeleton: #1c1c1e;
+  --bg: #050505;
+  --bg-elevated: #0f0f0f;
+  --bg-card: rgba(18, 18, 20, 0.8);
+  --bg-card-hover: rgba(28, 28, 30, 0.9);
+  --bg-glass: rgba(18, 18, 20, 0.65);
+  --bg-skeleton: #141416;
   --text-primary: #f5f5f7;
-  --text-secondary: rgba(245, 245, 247, 0.6);
-  --text-tertiary: rgba(245, 245, 247, 0.35);
+  --text-secondary: rgba(245, 245, 247, 0.55);
+  --text-tertiary: rgba(245, 245, 247, 0.3);
   --accent: #e8643c;
-  --accent-glow: rgba(232, 100, 60, 0.25);
-  --accent-soft: rgba(232, 100, 60, 0.08);
+  --accent-glow: rgba(232, 100, 60, 0.3);
+  --accent-soft: rgba(232, 100, 60, 0.1);
   --accent-2: #d4a853;
   --accent-3: #6eb5ff;
   --border: rgba(255,255,255,0.06);
-  --border-hover: rgba(255,255,255,0.12);
-  --radius: 20px;
-  --radius-sm: 12px;
+  --border-hover: rgba(255,255,255,0.14);
+  --radius: 22px;
+  --radius-sm: 14px;
   --radius-xs: 8px;
-  --shadow-card: 0 2px 20px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
-  --shadow-card-hover: 0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px var(--border-hover);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.25), 0 0 0 1px var(--border);
+  --shadow-card-hover: 0 12px 48px rgba(0,0,0,0.4), 0 0 0 1px var(--border-hover);
   --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-  --duration: 0.6s;
+  --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --duration: 0.7s;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -45,18 +48,28 @@
    RESET & BASE
    ═══════════════════════════════════════════════ */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 80px; }
-
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, Arial, sans-serif;
   background: var(--bg);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.65;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-bottom: var(--safe-bottom);
+}
+::selection { background: rgba(232,100,60,0.3); color: var(--text-primary); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+/* ═══════════════════════════════════════════════
+   NOISE TEXTURE OVERLAY
+   ═══════════════════════════════════════════════ */
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
 }
 
 /* ═══════════════════════════════════════════════
@@ -65,34 +78,55 @@ body {
 .skeleton-screen {
   position: fixed; inset: 0; z-index: 9999; background: var(--bg);
   display: flex; flex-direction: column; align-items: center;
-  padding: 60px 20px 20px;
-  transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-smooth);
+  padding: 60px 20px 20px; overflow: hidden;
+  transition: opacity 1s var(--ease-apple), transform 0.8s var(--ease-apple), filter 0.8s var(--ease-apple);
 }
-.skeleton-screen.hidden { opacity: 0; transform: scale(1.02); pointer-events: none; }
-
-.skeleton-hero { width: 100%; max-width: 500px; margin-bottom: 40px; }
-.skeleton-flag { width: 48px; height: 48px; border-radius: 50%; background: var(--bg-skeleton); margin: 0 auto 20px; position: relative; overflow: hidden; }
-.skeleton-title { height: 36px; width: 65%; border-radius: 10px; background: var(--bg-skeleton); margin: 0 auto 12px; position: relative; overflow: hidden; }
-.skeleton-subtitle { height: 18px; width: 45%; border-radius: 8px; background: var(--bg-skeleton); margin: 0 auto 32px; position: relative; overflow: hidden; }
-.skeleton-nav { display: flex; gap: 8px; justify-content: center; margin-bottom: 40px; flex-wrap: wrap; max-width: 500px; width: 100%; }
-.skeleton-nav-item { height: 36px; width: 54px; border-radius: 18px; background: var(--bg-skeleton); position: relative; overflow: hidden; }
-.skeleton-cards { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 16px; }
-.skeleton-card { height: 220px; border-radius: var(--radius); background: var(--bg-skeleton); position: relative; overflow: hidden; }
-.skeleton-card-sm { height: 90px; border-radius: var(--radius-sm); background: var(--bg-skeleton); position: relative; overflow: hidden; }
-
-.skeleton-flag::after, .skeleton-title::after, .skeleton-subtitle::after,
-.skeleton-nav-item::after, .skeleton-card::after, .skeleton-card-sm::after {
+.skeleton-screen.hidden { opacity: 0; transform: scale(1.03); filter: blur(10px); pointer-events: none; }
+.skeleton-hero { width: 100%; max-width: 520px; margin-bottom: 42px; }
+.skeleton-pulse { position: relative; overflow: hidden; background: var(--bg-skeleton); border-radius: 10px; }
+.skeleton-pulse::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.05) 60%, transparent 100%);
-  animation: shimmer 2s infinite; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 30%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.04) 70%, transparent 100%);
+  animation: shimmer 2.2s ease-in-out infinite; transform: translateX(-100%);
 }
 @keyframes shimmer { 100% { transform: translateX(100%); } }
-.skeleton-card:nth-child(2)::after { animation-delay: 0.15s; }
-.skeleton-card-sm::after { animation-delay: 0.3s; }
-.skeleton-nav-item:nth-child(2)::after { animation-delay: 0.1s; }
-.skeleton-nav-item:nth-child(3)::after { animation-delay: 0.2s; }
-.skeleton-nav-item:nth-child(4)::after { animation-delay: 0.3s; }
-.skeleton-nav-item:nth-child(5)::after { animation-delay: 0.4s; }
+.sk-flag { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 22px; }
+.sk-title { height: 40px; width: 60%; margin: 0 auto 14px; border-radius: 12px; }
+.sk-subtitle { height: 18px; width: 42%; margin: 0 auto 16px; border-radius: 9px; }
+.sk-stats { display: flex; gap: 24px; justify-content: center; margin-bottom: 42px; }
+.sk-stat { width: 64px; height: 48px; border-radius: 12px; }
+.sk-nav { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; max-width: 520px; width: 100%; margin-bottom: 42px; }
+.sk-nav-pill { height: 38px; width: 58px; border-radius: 20px; }
+.sk-cards { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 16px; }
+.sk-card-lg { height: 240px; border-radius: var(--radius); }
+.sk-card-sm { height: 96px; border-radius: var(--radius-sm); }
+.sk-card-lg:nth-child(1)::after { animation-delay: 0s; }
+.sk-card-sm:nth-child(2)::after { animation-delay: 0.15s; }
+.sk-card-lg:nth-child(3)::after { animation-delay: 0.3s; }
+.sk-nav-pill:nth-child(n+2)::after { animation-delay: calc(0.08s * var(--i)); }
+
+/* ═══════════════════════════════════════════════
+   LANGUAGE TOGGLE
+   ═══════════════════════════════════════════════ */
+.lang-toggle {
+  position: fixed; top: 16px; z-index: 10000;
+  inset-inline-start: 16px;
+  display: flex; align-items: center; gap: 0;
+  background: var(--bg-glass); -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
+  border: 1px solid var(--border); border-radius: 24px; padding: 3px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3); cursor: pointer;
+  transition: all 0.3s var(--ease-apple);
+  opacity: 0; animation: fadeSlideIn 0.6s var(--ease-apple) 1.8s forwards;
+}
+.lang-toggle:hover { border-color: var(--border-hover); box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+.lang-btn {
+  padding: 6px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+  color: var(--text-secondary); background: transparent; border: none; cursor: pointer;
+  transition: all 0.35s var(--ease-apple); position: relative; z-index: 1;
+  letter-spacing: 0.5px;
+}
+.lang-btn.active { color: var(--text-primary); background: rgba(255,255,255,0.1); }
+@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ═══════════════════════════════════════════════
    PARALLAX HERO
@@ -100,131 +134,204 @@ body {
 .hero {
   position: relative; min-height: 100vh; min-height: 100dvh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 80px 24px 120px; overflow: hidden;
+  text-align: center; padding: 100px 24px 140px; overflow: hidden;
 }
 .hero-bg { position: absolute; inset: 0; z-index: 0; }
 .hero-bg::before {
   content: ''; position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(232,100,60,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 20% 100%, rgba(110,181,255,0.06) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(212,168,83,0.06) 0%, transparent 50%);
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(232,100,60,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 20% 100%, rgba(110,181,255,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(212,168,83,0.05) 0%, transparent 50%);
 }
 .hero-bg-grid {
   position: absolute; inset: 0;
-  background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-  background-size: 60px 60px;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 80px 80px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
 }
-.hero-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0; animation: orbFloat 8s var(--ease-smooth) infinite, fadeInSlow 2s var(--ease-smooth) forwards; }
-.hero-orb-1 { width: 300px; height: 300px; background: rgba(232,100,60,0.08); top: 10%; right: -10%; }
-.hero-orb-2 { width: 250px; height: 250px; background: rgba(110,181,255,0.06); bottom: 20%; left: -5%; animation-delay: 3s; }
-.hero-orb-3 { width: 200px; height: 200px; background: rgba(212,168,83,0.06); top: 50%; left: 30%; animation-delay: 5s; }
-@keyframes orbFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.05); } }
+.hero-orb {
+  position: absolute; border-radius: 50%; filter: blur(100px);
+  opacity: 0; animation: orbFloat 10s var(--ease-smooth) infinite, fadeInSlow 2.5s var(--ease-smooth) forwards;
+}
+.hero-orb-1 { width: 350px; height: 350px; background: rgba(232,100,60,0.08); top: 5%; right: -15%; }
+.hero-orb-2 { width: 280px; height: 280px; background: rgba(110,181,255,0.06); bottom: 15%; left: -8%; animation-delay: 3s; }
+.hero-orb-3 { width: 220px; height: 220px; background: rgba(212,168,83,0.06); top: 45%; left: 30%; animation-delay: 6s; }
+@keyframes orbFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-40px) scale(1.08); } }
 @keyframes fadeInSlow { to { opacity: 1; } }
 
 .hero-content { position: relative; z-index: 1; max-width: 600px; }
 .hero-flag {
-  font-size: 56px; margin-bottom: 16px; display: block;
-  opacity: 0; animation: heroReveal 1s var(--ease-out) 0.3s forwards, flagBounce 3s var(--ease-spring) infinite;
-  animation-delay: 0.3s, 2s;
+  font-size: 64px; margin-bottom: 20px; display: block;
+  opacity: 0; animation: heroReveal 1s var(--ease-out) 0.4s forwards, flagFloat 4s var(--ease-smooth) infinite;
+  animation-delay: 0.4s, 2.5s; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.3));
 }
-@keyframes flagBounce { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-6px) rotate(-2deg); } 75% { transform: translateY(-3px) rotate(2deg); } }
-@keyframes heroReveal { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes flagFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(-2deg); }
+  75% { transform: translateY(-4px) rotate(2deg); }
+}
+@keyframes heroReveal { from { opacity: 0; transform: translateY(40px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 .hero-title {
-  font-size: clamp(2.2rem, 7vw, 3.5rem); font-weight: 800; letter-spacing: -0.5px; line-height: 1.15;
-  margin-bottom: 12px; opacity: 0; animation: heroReveal 1s var(--ease-out) 0.5s forwards;
-  background: linear-gradient(135deg, var(--text-primary) 0%, rgba(245,245,247,0.7) 100%);
+  font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 800; letter-spacing: -1px; line-height: 1.1;
+  margin-bottom: 14px; opacity: 0; animation: heroReveal 1s var(--ease-out) 0.6s forwards;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(245,245,247,0.65) 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.hero-dates { font-size: clamp(0.95rem, 2.5vw, 1.15rem); color: var(--text-secondary); font-weight: 500; margin-bottom: 8px; opacity: 0; animation: heroReveal 1s var(--ease-out) 0.7s forwards; }
-.hero-meta { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px; opacity: 0; animation: heroReveal 1s var(--ease-out) 0.9s forwards; }
-.hero-stat { display: flex; flex-direction: column; align-items: center; }
-.hero-stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); line-height: 1.2; }
-.hero-stat-label { font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+.hero-dates {
+  font-size: clamp(1rem, 2.8vw, 1.2rem); color: var(--text-secondary); font-weight: 500;
+  margin-bottom: 10px; opacity: 0; animation: heroReveal 1s var(--ease-out) 0.8s forwards;
+}
+.hero-meta {
+  display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+  margin-top: 28px; opacity: 0; animation: heroReveal 1s var(--ease-out) 1s forwards;
+}
+.hero-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.hero-stat-value { font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1.1; }
+.hero-stat-label { font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
 
-.hero-scroll-cue { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: heroReveal 1s var(--ease-out) 1.3s forwards; }
-.hero-scroll-cue span { font-size: 0.7rem; color: var(--text-tertiary); letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
-.scroll-arrow { width: 24px; height: 24px; border-left: 2px solid var(--text-tertiary); border-bottom: 2px solid var(--text-tertiary); transform: rotate(-45deg); animation: scrollBounce 2s var(--ease-smooth) infinite; }
-@keyframes scrollBounce { 0%, 100% { transform: rotate(-45deg) translateY(0); opacity: 0.4; } 50% { transform: rotate(-45deg) translateY(6px); opacity: 1; } }
+.hero-scroll-cue {
+  position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  opacity: 0; animation: heroReveal 1s var(--ease-out) 1.5s forwards;
+}
+.hero-scroll-cue span { font-size: 0.65rem; color: var(--text-tertiary); letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700; }
+.scroll-arrow {
+  width: 20px; height: 20px; border-left: 2px solid var(--text-tertiary); border-bottom: 2px solid var(--text-tertiary);
+  transform: rotate(-45deg); animation: scrollBounce 2.2s var(--ease-smooth) infinite;
+}
+[dir="ltr"] .scroll-arrow { border-left: none; border-right: 2px solid var(--text-tertiary); border-bottom: 2px solid var(--text-tertiary); transform: rotate(-45deg); }
+@keyframes scrollBounce { 0%, 100% { transform: rotate(-45deg) translateY(0); opacity: 0.3; } 50% { transform: rotate(-45deg) translateY(8px); opacity: 1; } }
 
 /* ═══════════════════════════════════════════════
    STICKY NAV
    ═══════════════════════════════════════════════ */
 .sticky-nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(10, 10, 10, 0.8);
-  -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(5, 5, 5, 0.75);
+  -webkit-backdrop-filter: saturate(200%) blur(24px); backdrop-filter: saturate(200%) blur(24px);
   border-bottom: 1px solid var(--border); padding: 0;
-  transition: box-shadow 0.3s var(--ease-smooth);
+  transition: all 0.4s var(--ease-apple);
 }
-.sticky-nav.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
-.nav-scroll-container { display: flex; gap: 4px; padding: 10px 16px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.sticky-nav.scrolled { box-shadow: 0 4px 40px rgba(0,0,0,0.4); border-bottom-color: rgba(255,255,255,0.08); }
+.nav-scroll-container {
+  display: flex; gap: 4px; padding: 10px 16px;
+  overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+}
 .nav-scroll-container::-webkit-scrollbar { display: none; }
 .nav-pill {
-  scroll-snap-align: start; flex-shrink: 0; padding: 7px 14px; border-radius: 20px;
+  scroll-snap-align: start; flex-shrink: 0; padding: 8px 16px; border-radius: 22px;
   font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); background: transparent;
-  border: 1px solid transparent; cursor: pointer; transition: all 0.3s var(--ease-smooth);
+  border: 1px solid transparent; cursor: pointer; transition: all 0.35s var(--ease-apple);
   white-space: nowrap; text-decoration: none; display: flex; align-items: center; gap: 4px;
 }
-.nav-pill:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-.nav-pill.active { color: var(--text-primary); background: rgba(255,255,255,0.08); border-color: var(--border-hover); }
+.nav-pill:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
+.nav-pill.active {
+  color: var(--text-primary); background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.1); box-shadow: 0 0 20px rgba(232,100,60,0.1);
+}
 
 /* ═══════════════════════════════════════════════
    MAIN CONTENT
    ═══════════════════════════════════════════════ */
-.content { max-width: 680px; margin: 0 auto; padding: 0 16px 100px; }
+.content { max-width: 700px; margin: 0 auto; padding: 0 16px 120px; }
+
+/* ═══════════════════════════════════════════════
+   TEXT TRANSITION (LANGUAGE SWITCH)
+   ═══════════════════════════════════════════════ */
+[data-he][data-en] { transition: opacity 0.25s var(--ease-apple); }
+.lang-switching [data-he][data-en] { opacity: 0; }
 
 /* ═══════════════════════════════════════════════
    DAY SECTION
    ═══════════════════════════════════════════════ */
-.day-section { margin-bottom: 48px; position: relative; }
-.day-header { position: sticky; top: 56px; z-index: 50; padding: 16px 0 12px; background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 70%, transparent 100%); }
-.day-header-inner { display: flex; align-items: center; gap: 14px; }
-.day-number { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, var(--accent) 0%, #c94e2a 100%); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 800; color: white; flex-shrink: 0; box-shadow: 0 4px 16px var(--accent-glow); }
+.day-section { margin-bottom: 56px; position: relative; }
+.day-header {
+  position: sticky; top: 56px; z-index: 50; padding: 18px 0 14px;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 75%, transparent 100%);
+}
+.day-header-inner { display: flex; align-items: center; gap: 16px; }
+.day-number {
+  width: 48px; height: 48px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent) 0%, #c94e2a 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.15rem; font-weight: 800; color: white; flex-shrink: 0;
+  box-shadow: 0 4px 20px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+}
 .day-info { flex: 1; min-width: 0; }
-.day-date { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); }
-.day-city { font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; }
+.day-date { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.2px; }
+.day-city { font-size: 0.82rem; color: var(--text-secondary); font-weight: 500; }
 
 /* ═══════════════════════════════════════════════
    TIMELINE
    ═══════════════════════════════════════════════ */
-.timeline { position: relative; padding-right: 24px; }
-.timeline::before { content: ''; position: absolute; top: 0; right: 7px; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--accent) 0%, var(--border) 30%, var(--border) 70%, transparent 100%); border-radius: 1px; }
-.timeline-item { position: relative; margin-bottom: 12px; opacity: 0; transform: translateY(20px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+.timeline { position: relative; padding-inline-start: 28px; }
+.timeline::before {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 2px;
+  inset-inline-start: 8px;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--border) 25%, var(--border) 75%, transparent 100%);
+  border-radius: 1px;
+}
+.timeline-item {
+  position: relative; margin-bottom: 14px;
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
 .timeline-item.visible { opacity: 1; transform: translateY(0); }
-.timeline-dot { position: absolute; right: -24px; top: 20px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2.5px solid var(--border); transform: translateX(50%); z-index: 2; transition: all 0.4s var(--ease-spring); }
-.timeline-item.visible .timeline-dot { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
-.timeline-item.transport .timeline-dot { border-color: var(--accent-3); box-shadow: 0 0 0 4px rgba(110,181,255,0.1); }
-.timeline-item.hotel .timeline-dot { border-color: var(--accent-2); box-shadow: 0 0 0 4px rgba(212,168,83,0.1); }
-
-/* Card with image — the dot needs to align to the image top */
+.timeline-dot {
+  position: absolute; top: 22px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--bg); border: 2.5px solid var(--border);
+  z-index: 2; transition: all 0.5s var(--ease-spring);
+  inset-inline-start: -28px;
+  transform: translateX(calc(-50% * var(--dir-mult, -1)));
+}
+[dir="rtl"] .timeline-dot { --dir-mult: 1; transform: translateX(50%); }
+[dir="ltr"] .timeline-dot { --dir-mult: -1; transform: translateX(-50%); }
+.timeline-item.visible .timeline-dot {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 5px var(--accent-soft), 0 0 16px var(--accent-glow);
+}
+.timeline-item.transport .timeline-dot { border-color: var(--accent-3); box-shadow: 0 0 0 5px rgba(110,181,255,0.1); }
+.timeline-item.hotel .timeline-dot { border-color: var(--accent-2); box-shadow: 0 0 0 5px rgba(212,168,83,0.1); }
 .timeline-item.has-img .timeline-dot { top: 80px; }
 
 /* ═══════════════════════════════════════════════
    ACTIVITY CARD
    ═══════════════════════════════════════════════ */
 .activity-card {
-  background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border);
-  transition: all 0.4s var(--ease-smooth); position: relative; overflow: hidden;
+  background: var(--bg-card);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border-radius: var(--radius); border: 1px solid var(--border);
+  transition: all 0.45s var(--ease-apple); position: relative; overflow: hidden;
 }
-.activity-card:not(.has-img) { padding: 18px 20px; }
+.activity-card:not(.has-img) { padding: 18px 22px; }
 .activity-card::before {
-  content: ''; position: absolute; top: 0; right: 0; width: 3px; height: 100%;
-  border-radius: 0 3px 3px 0; background: var(--accent); opacity: 0; transition: opacity 0.3s var(--ease-smooth);
+  content: ''; position: absolute; top: 0; width: 3px; height: 100%;
+  inset-inline-start: 0;
+  border-radius: 3px 0 0 3px;
+  background: var(--accent); opacity: 0; transition: opacity 0.35s var(--ease-apple);
 }
-.activity-card:hover { background: var(--bg-card-hover); border-color: var(--border-hover); box-shadow: var(--shadow-card-hover); transform: translateX(-2px); }
+[dir="ltr"] .activity-card::before { border-radius: 3px 0 0 3px; }
+[dir="rtl"] .activity-card::before { border-radius: 0 3px 3px 0; }
+.activity-card:hover {
+  background: var(--bg-card-hover); border-color: var(--border-hover);
+  box-shadow: var(--shadow-card-hover); transform: translateY(-3px);
+}
 .activity-card:hover::before { opacity: 1; }
 
 .activity-card.transport-card { background: rgba(110,181,255,0.04); border-color: rgba(110,181,255,0.1); }
 .activity-card.transport-card::before { background: var(--accent-3); }
-.transport-card .route-steps { direction: ltr; text-align: left; list-style: none; padding: 0; margin: 6px 0 0; display: flex; flex-direction: column; gap: 4px; }
-.transport-card .route-step { display: flex; align-items: baseline; gap: 8px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+.transport-card .route-steps { direction: ltr; text-align: left; list-style: none; padding: 0; margin: 6px 0 0; display: flex; flex-direction: column; gap: 5px; }
+.transport-card .route-step { display: flex; align-items: baseline; gap: 8px; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.55; }
 .transport-card .route-step .step-icon { color: var(--accent-3); font-size: 0.7rem; flex-shrink: 0; margin-top: 2px; }
 .transport-card .route-step .step-text { flex: 1; }
-.transport-card .route-step .step-duration { color: rgba(110,181,255,0.6); font-size: 0.78rem; white-space: nowrap; }
+.transport-card .route-step .step-duration { color: rgba(110,181,255,0.5); font-size: 0.78rem; white-space: nowrap; }
 .activity-card.hotel-card { background: rgba(212,168,83,0.04); border-color: rgba(212,168,83,0.1); }
 .activity-card.hotel-card::before { background: var(--accent-2); }
 
@@ -232,146 +339,167 @@ body {
    ACTIVITY IMAGE
    ═══════════════════════════════════════════════ */
 .activity-img-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border-radius: var(--radius) var(--radius) 0 0;
-  background: var(--bg-skeleton);
+  position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden;
+  border-radius: var(--radius) var(--radius) 0 0; background: var(--bg-skeleton);
 }
 .activity-img-wrap::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(0deg, rgba(22,22,22,0.7) 0%, rgba(22,22,22,0.1) 40%, transparent 100%);
+  background: linear-gradient(0deg, rgba(18,18,20,0.75) 0%, rgba(18,18,20,0.1) 40%, transparent 100%);
   pointer-events: none;
 }
 .activity-img {
   width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.6s var(--ease-smooth), opacity 0.6s var(--ease-smooth);
-  opacity: 0;
+  transition: transform 0.7s var(--ease-apple), opacity 0.8s var(--ease-apple);
+  opacity: 0; will-change: transform;
 }
 .activity-img.loaded { opacity: 1; }
-.activity-card:hover .activity-img { transform: scale(1.05); }
-
-.activity-card-body { padding: 16px 20px 18px; }
+.activity-card:hover .activity-img { transform: scale(1.06); }
+.activity-card-body { padding: 16px 22px 20px; }
 
 .activity-time {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 0.75rem; font-weight: 700; color: var(--accent); background: var(--accent-soft);
-  padding: 4px 10px; border-radius: 8px; margin-bottom: 10px; letter-spacing: 0.5px; direction: ltr;
+  font-size: 0.75rem; font-weight: 700; color: var(--accent);
+  background: var(--accent-soft); padding: 4px 12px; border-radius: 10px;
+  margin-bottom: 10px; letter-spacing: 0.5px; direction: ltr;
 }
 .transport-card .activity-time { color: var(--accent-3); background: rgba(110,181,255,0.08); }
 .hotel-card .activity-time { color: var(--accent-2); background: rgba(212,168,83,0.08); }
 
-.activity-name { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; line-height: 1.4; }
-.activity-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; }
+.activity-name { font-size: 1.08rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; line-height: 1.4; }
+.activity-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
 
 /* ═══════════════════════════════════════════════
    HOTEL BANNER
    ═══════════════════════════════════════════════ */
 .hotel-banner {
   background: linear-gradient(135deg, rgba(212,168,83,0.08) 0%, rgba(212,168,83,0.02) 100%);
-  border: 1px solid rgba(212,168,83,0.15); border-radius: var(--radius);
-  padding: 16px 20px; margin-bottom: 16px;
-  opacity: 0; transform: translateY(20px);
-  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+  border: 1px solid rgba(212,168,83,0.12); border-radius: var(--radius);
+  padding: 18px 22px; margin-bottom: 16px;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
 }
 .hotel-banner.visible { opacity: 1; transform: translateY(0); }
-.hotel-banner-label { font-size: 0.65rem; font-weight: 700; color: var(--accent-2); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
-.hotel-banner-name { font-size: 1rem; font-weight: 700; color: var(--text-primary); line-height: 1.4; }
-.hotel-banner-gym { font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; }
+.hotel-banner-label { font-size: 0.65rem; font-weight: 700; color: var(--accent-2); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 7px; }
+.hotel-banner-name { font-size: 1.02rem; font-weight: 700; color: var(--text-primary); line-height: 1.4; }
+.hotel-banner-gym { font-size: 0.82rem; color: var(--text-secondary); margin-top: 5px; }
 
 /* ═══════════════════════════════════════════════
-   PARALLAX CITY DIVIDERS
+   CITY DIVIDERS
    ═══════════════════════════════════════════════ */
 .city-divider {
-  position: relative; margin: 64px 0 48px; padding: 40px 24px; border-radius: var(--radius);
+  position: relative; margin: 72px -16px 56px; padding: 52px 28px;
   overflow: hidden; text-align: center;
-  opacity: 0; transform: translateY(40px) scale(0.95);
-  transition: all 0.8s var(--ease-out);
+  opacity: 0; transform: translateY(50px) scale(0.94);
+  transition: all 0.9s var(--ease-out);
 }
 .city-divider.visible { opacity: 1; transform: translateY(0) scale(1); }
-.city-divider-bg { position: absolute; inset: 0; z-index: 0; }
-.city-divider[data-city="tokyo"] .city-divider-bg { background: linear-gradient(135deg, rgba(232,100,60,0.15), rgba(232,100,60,0.03)); }
-.city-divider[data-city="hakone"] .city-divider-bg { background: linear-gradient(135deg, rgba(76,175,80,0.15), rgba(76,175,80,0.03)); }
-.city-divider[data-city="kyoto"] .city-divider-bg { background: linear-gradient(135deg, rgba(212,168,83,0.15), rgba(212,168,83,0.03)); }
-.city-divider[data-city="kanazawa"] .city-divider-bg { background: linear-gradient(135deg, rgba(110,181,255,0.15), rgba(110,181,255,0.03)); }
-.city-divider[data-city="takayama"] .city-divider-bg { background: linear-gradient(135deg, rgba(156,39,176,0.15), rgba(156,39,176,0.03)); }
-.city-divider[data-city="osaka"] .city-divider-bg { background: linear-gradient(135deg, rgba(255,152,0,0.15), rgba(255,152,0,0.03)); }
-.city-divider-border { position: absolute; inset: 0; border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.06); z-index: 1; }
+.city-divider-bg {
+  position: absolute; inset: 0; z-index: 0;
+  transition: transform 0.1s linear; will-change: transform;
+}
+.city-divider[data-city="tokyo"] .city-divider-bg { background: linear-gradient(135deg, rgba(232,100,60,0.12), rgba(232,100,60,0.02)); }
+.city-divider[data-city="hakone"] .city-divider-bg { background: linear-gradient(135deg, rgba(76,175,80,0.12), rgba(76,175,80,0.02)); }
+.city-divider[data-city="kyoto"] .city-divider-bg { background: linear-gradient(135deg, rgba(212,168,83,0.12), rgba(212,168,83,0.02)); }
+.city-divider[data-city="kanazawa"] .city-divider-bg { background: linear-gradient(135deg, rgba(110,181,255,0.12), rgba(110,181,255,0.02)); }
+.city-divider[data-city="takayama"] .city-divider-bg { background: linear-gradient(135deg, rgba(156,39,176,0.12), rgba(156,39,176,0.02)); }
+.city-divider[data-city="osaka"] .city-divider-bg { background: linear-gradient(135deg, rgba(255,152,0,0.12), rgba(255,152,0,0.02)); }
+.city-divider-border { position: absolute; inset: 0; border: 1px solid rgba(255,255,255,0.05); z-index: 1; }
 .city-divider-content { position: relative; z-index: 2; }
-.city-divider-emoji { font-size: 2.5rem; margin-bottom: 8px; display: block; }
-.city-divider-name { font-size: 1.6rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
-.city-divider-sub { font-size: 0.85rem; color: var(--text-secondary); }
+.city-divider-emoji {
+  font-size: 3rem; margin-bottom: 10px; display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+.city-divider-name {
+  font-size: 1.8rem; font-weight: 800; color: var(--text-primary);
+  margin-bottom: 6px; letter-spacing: -0.5px;
+}
+.city-divider-sub { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
 
 /* ═══════════════════════════════════════════════
-   PARALLAX FLOAT ELEMENTS
+   PARALLAX SHAPES
    ═══════════════════════════════════════════════ */
 .parallax-shapes { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-.parallax-shape { position: absolute; border-radius: 50%; opacity: 0.03; transition: transform 0.1s linear; }
-.parallax-shape-1 { width: 400px; height: 400px; background: var(--accent); top: 20%; right: -15%; }
-.parallax-shape-2 { width: 300px; height: 300px; background: var(--accent-3); top: 60%; left: -10%; }
-.parallax-shape-3 { width: 200px; height: 200px; background: var(--accent-2); top: 40%; left: 50%; }
+.parallax-shape { position: absolute; border-radius: 50%; opacity: 0.025; transition: transform 0.1s linear; will-change: transform; }
+.parallax-shape-1 { width: 500px; height: 500px; background: radial-gradient(circle, var(--accent), transparent 70%); top: 15%; right: -20%; }
+.parallax-shape-2 { width: 380px; height: 380px; background: radial-gradient(circle, var(--accent-3), transparent 70%); top: 55%; left: -12%; }
+.parallax-shape-3 { width: 260px; height: 260px; background: radial-gradient(circle, var(--accent-2), transparent 70%); top: 35%; left: 45%; }
 
 /* ═══════════════════════════════════════════════
    SCROLL PROGRESS
    ═══════════════════════════════════════════════ */
-.scroll-progress { position: fixed; top: 0; right: 0; width: 100%; height: 2px; z-index: 200; background: transparent; }
-.scroll-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 0 1px 1px 0; transition: width 0.1s linear; }
+.scroll-progress { position: fixed; top: 0; left: 0; right: 0; width: 100%; height: 2px; z-index: 200; }
+.scroll-progress-bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+  border-radius: 0 2px 2px 0; transition: width 0.08s linear;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
 
 /* ═══════════════════════════════════════════════
    BACK TO TOP
    ═══════════════════════════════════════════════ */
 .back-to-top {
-  position: fixed; bottom: calc(24px + var(--safe-bottom)); left: 24px;
+  position: fixed; bottom: calc(28px + var(--safe-bottom));
+  inset-inline-end: 24px;
   width: 48px; height: 48px; border-radius: 50%;
-  background: var(--bg-glass); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  background: var(--bg-glass); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
   border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
   cursor: pointer; opacity: 0; transform: scale(0.8) translateY(20px);
-  transition: all 0.4s var(--ease-spring); z-index: 90; text-decoration: none; color: var(--text-secondary); font-size: 1.2rem;
+  transition: all 0.4s var(--ease-spring); z-index: 90; text-decoration: none;
+  color: var(--text-secondary); font-size: 1.2rem;
 }
 .back-to-top.visible { opacity: 1; transform: scale(1) translateY(0); }
-.back-to-top:hover { background: rgba(255,255,255,0.1); border-color: var(--border-hover); transform: scale(1.1) translateY(-2px); }
+.back-to-top:hover { background: rgba(255,255,255,0.1); border-color: var(--border-hover); transform: scale(1.08) translateY(-3px); color: var(--text-primary); }
 
 /* ═══════════════════════════════════════════════
    FOOTER
    ═══════════════════════════════════════════════ */
-.footer { text-align: center; padding: 60px 24px 40px; max-width: 680px; margin: 0 auto; opacity: 0; transform: translateY(20px); transition: all 0.6s var(--ease-out); }
+.footer {
+  text-align: center; padding: 72px 24px 48px; max-width: 700px; margin: 0 auto;
+  opacity: 0; transform: translateY(24px); transition: all 0.7s var(--ease-out);
+}
 .footer.visible { opacity: 1; transform: translateY(0); }
-.footer-emoji { font-size: 2rem; margin-bottom: 12px; display: block; }
-.footer-text { font-size: 0.85rem; color: var(--text-tertiary); font-weight: 500; }
+.footer-emoji { font-size: 2.4rem; margin-bottom: 14px; display: block; }
+.footer-text { font-size: 0.88rem; color: var(--text-tertiary); font-weight: 500; letter-spacing: 0.5px; }
 
 /* ═══════════════════════════════════════════════
    STAGGER DELAYS
    ═══════════════════════════════════════════════ */
-.stagger-1 { transition-delay: 0.05s !important; }
-.stagger-2 { transition-delay: 0.1s !important; }
-.stagger-3 { transition-delay: 0.15s !important; }
-.stagger-4 { transition-delay: 0.2s !important; }
-.stagger-5 { transition-delay: 0.25s !important; }
-.stagger-6 { transition-delay: 0.3s !important; }
-.stagger-7 { transition-delay: 0.35s !important; }
-.stagger-8 { transition-delay: 0.4s !important; }
+.stagger-1 { transition-delay: 0.06s !important; }
+.stagger-2 { transition-delay: 0.12s !important; }
+.stagger-3 { transition-delay: 0.18s !important; }
+.stagger-4 { transition-delay: 0.24s !important; }
+.stagger-5 { transition-delay: 0.30s !important; }
+.stagger-6 { transition-delay: 0.36s !important; }
+.stagger-7 { transition-delay: 0.42s !important; }
+.stagger-8 { transition-delay: 0.48s !important; }
 
 /* ═══════════════════════════════════════════════
-   RESPONSIVE – TABLET+
+   RESPONSIVE
    ═══════════════════════════════════════════════ */
 @media (min-width: 768px) {
-  .content { padding: 0 32px 120px; }
-  .activity-card:not(.has-img) { padding: 22px 26px; }
-  .activity-card-body { padding: 18px 26px 22px; }
-  .day-number { width: 50px; height: 50px; font-size: 1.2rem; border-radius: 16px; }
-  .timeline { padding-right: 32px; }
-  .timeline::before { right: 11px; }
-  .timeline-dot { right: -32px; }
+  .content { padding: 0 36px 140px; }
+  .activity-card:not(.has-img) { padding: 22px 28px; }
+  .activity-card-body { padding: 18px 28px 24px; }
+  .day-number { width: 54px; height: 54px; font-size: 1.25rem; border-radius: 18px; }
+  .timeline { padding-inline-start: 36px; }
+  .timeline::before { inset-inline-start: 12px; }
+  .timeline-dot { inset-inline-start: -36px; }
   .timeline-item.has-img .timeline-dot { top: 80px; }
-  .city-divider { padding: 56px 40px; margin: 80px 0 56px; }
+  .city-divider { padding: 64px 48px; margin: 88px 0 64px; border-radius: var(--radius); }
+  .hero { padding: 120px 32px 160px; }
+}
+
+@media (max-width: 380px) {
+  .hero-meta { gap: 20px; }
+  .hero-stat-value { font-size: 1.6rem; }
+  .lang-toggle { top: 12px; }
+  .lang-btn { padding: 5px 10px; font-size: 0.72rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
-::selection { background: rgba(232,100,60,0.3); color: var(--text-primary); }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -379,23 +507,38 @@ body {
 <!-- ═══════════════ SKELETON LOADING ═══════════════ -->
 <div class="skeleton-screen" id="skeleton">
   <div class="skeleton-hero">
-    <div class="skeleton-flag"></div>
-    <div class="skeleton-title"></div>
-    <div class="skeleton-subtitle"></div>
-    <div class="skeleton-nav">
-      <div class="skeleton-nav-item"></div><div class="skeleton-nav-item"></div><div class="skeleton-nav-item"></div>
-      <div class="skeleton-nav-item"></div><div class="skeleton-nav-item"></div><div class="skeleton-nav-item"></div>
+    <div class="skeleton-pulse sk-flag"></div>
+    <div class="skeleton-pulse sk-title"></div>
+    <div class="skeleton-pulse sk-subtitle"></div>
+    <div class="sk-stats">
+      <div class="skeleton-pulse sk-stat"></div>
+      <div class="skeleton-pulse sk-stat"></div>
+      <div class="skeleton-pulse sk-stat"></div>
+    </div>
+    <div class="sk-nav">
+      <div class="skeleton-pulse sk-nav-pill" style="--i:1"></div>
+      <div class="skeleton-pulse sk-nav-pill" style="--i:2"></div>
+      <div class="skeleton-pulse sk-nav-pill" style="--i:3"></div>
+      <div class="skeleton-pulse sk-nav-pill" style="--i:4"></div>
+      <div class="skeleton-pulse sk-nav-pill" style="--i:5"></div>
+      <div class="skeleton-pulse sk-nav-pill" style="--i:6"></div>
     </div>
   </div>
-  <div class="skeleton-cards">
-    <div class="skeleton-card"></div>
-    <div class="skeleton-card-sm"></div>
-    <div class="skeleton-card"></div>
+  <div class="sk-cards">
+    <div class="skeleton-pulse sk-card-lg"></div>
+    <div class="skeleton-pulse sk-card-sm"></div>
+    <div class="skeleton-pulse sk-card-lg"></div>
   </div>
 </div>
 
 <!-- ═══════════════ SCROLL PROGRESS ═══════════════ -->
 <div class="scroll-progress"><div class="scroll-progress-bar" id="progressBar"></div></div>
+
+<!-- ═══════════════ LANGUAGE TOGGLE ═══════════════ -->
+<div class="lang-toggle" id="langToggle">
+  <button class="lang-btn active" data-lang="he" id="btnHe">עב</button>
+  <button class="lang-btn" data-lang="en" id="btnEn">EN</button>
+</div>
 
 <!-- ═══════════════ PARALLAX SHAPES ═══════════════ -->
 <div class="parallax-shapes" id="parallaxShapes">
@@ -414,36 +557,36 @@ body {
   </div>
   <div class="hero-content">
     <span class="hero-flag">🇯🇵</span>
-    <h1 class="hero-title">מסלול יפן</h1>
-    <p class="hero-dates">11 – 26 במרץ 2026</p>
+    <h1 class="hero-title" data-he="מסלול יפן" data-en="Japan Itinerary">מסלול יפן</h1>
+    <p class="hero-dates" data-he="11 – 26 במרץ 2026" data-en="March 11 – 26, 2026">11 – 26 במרץ 2026</p>
     <div class="hero-meta">
-      <div class="hero-stat"><span class="hero-stat-value">16</span><span class="hero-stat-label">ימים</span></div>
-      <div class="hero-stat"><span class="hero-stat-value">6</span><span class="hero-stat-label">ערים</span></div>
-      <div class="hero-stat"><span class="hero-stat-value">∞</span><span class="hero-stat-label">חוויות</span></div>
+      <div class="hero-stat"><span class="hero-stat-value" id="counterDays">16</span><span class="hero-stat-label" data-he="ימים" data-en="Days">ימים</span></div>
+      <div class="hero-stat"><span class="hero-stat-value" id="counterCities">6</span><span class="hero-stat-label" data-he="ערים" data-en="Cities">ערים</span></div>
+      <div class="hero-stat"><span class="hero-stat-value">∞</span><span class="hero-stat-label" data-he="חוויות" data-en="Experiences">חוויות</span></div>
     </div>
   </div>
-  <div class="hero-scroll-cue"><span>גלול למטה</span><div class="scroll-arrow"></div></div>
+  <div class="hero-scroll-cue"><span data-he="גלול למטה" data-en="Scroll Down">גלול למטה</span><div class="scroll-arrow"></div></div>
 </section>
 
 <!-- ═══════════════ STICKY NAV ═══════════════ -->
 <nav class="sticky-nav" id="stickyNav">
   <div class="nav-scroll-container" id="navContainer">
-    <a href="#day-1" class="nav-pill" data-day="1">יום 1</a>
-    <a href="#day-2" class="nav-pill" data-day="2">יום 2</a>
-    <a href="#day-3" class="nav-pill" data-day="3">יום 3</a>
-    <a href="#day-4" class="nav-pill" data-day="4">יום 4</a>
-    <a href="#day-5" class="nav-pill" data-day="5">יום 5</a>
-    <a href="#day-6" class="nav-pill" data-day="6">יום 6</a>
-    <a href="#day-7" class="nav-pill" data-day="7">יום 7</a>
-    <a href="#day-8" class="nav-pill" data-day="8">יום 8</a>
-    <a href="#day-9" class="nav-pill" data-day="9">יום 9</a>
-    <a href="#day-10" class="nav-pill" data-day="10">יום 10</a>
-    <a href="#day-11" class="nav-pill" data-day="11">יום 11</a>
-    <a href="#day-12" class="nav-pill" data-day="12">יום 12</a>
-    <a href="#day-13" class="nav-pill" data-day="13">יום 13</a>
-    <a href="#day-14" class="nav-pill" data-day="14">יום 14</a>
-    <a href="#day-15" class="nav-pill" data-day="15">יום 15</a>
-    <a href="#day-16" class="nav-pill" data-day="16">יום 16</a>
+    <a href="#day-1" class="nav-pill" data-day="1" data-he="יום 1" data-en="Day 1">יום 1</a>
+    <a href="#day-2" class="nav-pill" data-day="2" data-he="יום 2" data-en="Day 2">יום 2</a>
+    <a href="#day-3" class="nav-pill" data-day="3" data-he="יום 3" data-en="Day 3">יום 3</a>
+    <a href="#day-4" class="nav-pill" data-day="4" data-he="יום 4" data-en="Day 4">יום 4</a>
+    <a href="#day-5" class="nav-pill" data-day="5" data-he="יום 5" data-en="Day 5">יום 5</a>
+    <a href="#day-6" class="nav-pill" data-day="6" data-he="יום 6" data-en="Day 6">יום 6</a>
+    <a href="#day-7" class="nav-pill" data-day="7" data-he="יום 7" data-en="Day 7">יום 7</a>
+    <a href="#day-8" class="nav-pill" data-day="8" data-he="יום 8" data-en="Day 8">יום 8</a>
+    <a href="#day-9" class="nav-pill" data-day="9" data-he="יום 9" data-en="Day 9">יום 9</a>
+    <a href="#day-10" class="nav-pill" data-day="10" data-he="יום 10" data-en="Day 10">יום 10</a>
+    <a href="#day-11" class="nav-pill" data-day="11" data-he="יום 11" data-en="Day 11">יום 11</a>
+    <a href="#day-12" class="nav-pill" data-day="12" data-he="יום 12" data-en="Day 12">יום 12</a>
+    <a href="#day-13" class="nav-pill" data-day="13" data-he="יום 13" data-en="Day 13">יום 13</a>
+    <a href="#day-14" class="nav-pill" data-day="14" data-he="יום 14" data-en="Day 14">יום 14</a>
+    <a href="#day-15" class="nav-pill" data-day="15" data-he="יום 15" data-en="Day 15">יום 15</a>
+    <a href="#day-16" class="nav-pill" data-day="16" data-he="יום 16" data-en="Day 16">יום 16</a>
   </div>
 </nav>
 
@@ -454,10 +597,13 @@ body {
   <section class="day-section" id="day-1">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">1</div>
-      <div class="day-info"><div class="day-date">11.3 · יום רביעי</div><div class="day-city">טוקיו — הגעה</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="11.3 · יום רביעי" data-en="Mar 11 · Wednesday">11.3 · יום רביעי</div>
+        <div class="day-city" data-he="טוקיו — הגעה" data-en="Tokyo — Arrival">טוקיו — הגעה</div>
+      </div>
     </div></div>
     <div class="hotel-banner" data-animate>
-      <div class="hotel-banner-label">🏨 מלון</div>
+      <div class="hotel-banner-label" data-he="🏨 מלון" data-en="🏨 Hotel">🏨 מלון</div>
       <div class="hotel-banner-name">Sequence Miyashita Park</div>
       <div class="hotel-banner-gym">💪 Gold's Gym Shibuya (24/7)</div>
     </div>
@@ -466,20 +612,20 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card hotel-card">
           <div class="activity-time">09:00</div>
-          <div class="activity-name">הגעה למלון + הפקדת מזוודות</div>
-          <div class="activity-desc">הפקדת מזוודות במלון (צ׳ק אין רשמי ב-15:00)</div>
+          <div class="activity-name" data-he="הגעה למלון + הפקדת מזוודות" data-en="Hotel Arrival + Luggage Drop-off">הגעה למלון + הפקדת מזוודות</div>
+          <div class="activity-desc" data-he="הפקדת מזוודות במלון (צ׳ק אין רשמי ב-15:00)" data-en="Drop luggage at hotel (official check-in at 15:00)">הפקדת מזוודות במלון (צ׳ק אין רשמי ב-15:00)</div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-2" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=800&q=80" alt="מקדש סנסו-ג׳י">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=800&q=80" alt="Sensō-ji Temple">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">09:30</div>
-            <div class="activity-name">מקדש סנסו-ג׳י</div>
-            <div class="activity-desc">שער הרעם ופנס הנייר הענק</div>
+            <div class="activity-name" data-he="מקדש סנסו-ג׳י" data-en="Sensō-ji Temple">מקדש סנסו-ג׳י</div>
+            <div class="activity-desc" data-he="שער הרעם ופנס הנייר הענק" data-en="Thunder Gate & giant paper lantern">שער הרעם ופנס הנייר הענק</div>
           </div>
         </div>
       </div>
@@ -487,12 +633,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1601376754000-117ee1af7db2?w=800&q=80" alt="רחוב ניקאמיסה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1601376754000-117ee1af7db2?w=800&q=80" alt="Nakamise Street">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">10:30</div>
-            <div class="activity-name">רחוב ניקאמיסה</div>
-            <div class="activity-desc">נשנושים וקניות מסורתיות</div>
+            <div class="activity-name" data-he="רחוב ניקאמיסה" data-en="Nakamise Street">רחוב ניקאמיסה</div>
+            <div class="activity-desc" data-he="נשנושים וקניות מסורתיות" data-en="Snacks & traditional shopping">נשנושים וקניות מסורתיות</div>
           </div>
         </div>
       </div>
@@ -500,12 +646,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/1/18/Ueno_park.jpg" alt="פארק אואנו">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/1/18/Ueno_park.jpg" alt="Ueno Park">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">13:30</div>
-            <div class="activity-name">פארק אואנו</div>
-            <div class="activity-desc">שדרות עצים רחבות</div>
+            <div class="activity-name" data-he="פארק אואנו" data-en="Ueno Park">פארק אואנו</div>
+            <div class="activity-desc" data-he="שדרות עצים רחבות" data-en="Wide tree-lined avenues">שדרות עצים רחבות</div>
           </div>
         </div>
       </div>
@@ -516,19 +662,22 @@ body {
   <section class="day-section" id="day-2">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">2</div>
-      <div class="day-info"><div class="day-date">12.3 · יום חמישי</div><div class="day-city">טוקיו</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="12.3 · יום חמישי" data-en="Mar 12 · Thursday">12.3 · יום חמישי</div>
+        <div class="day-city" data-he="טוקיו" data-en="Tokyo">טוקיו</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item has-img stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1686933021179-f376a84dfc66?w=800&q=80" alt="מקדש מייג׳י">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1686933021179-f376a84dfc66?w=800&q=80" alt="Meiji Shrine">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">09:30</div>
-            <div class="activity-name">מקדש מייג׳י</div>
-            <div class="activity-desc">חביות סאקה ויער מלאכותי</div>
+            <div class="activity-name" data-he="מקדש מייג׳י" data-en="Meiji Shrine">מקדש מייג׳י</div>
+            <div class="activity-desc" data-he="חביות סאקה ויער מלאכותי" data-en="Sake barrels & man-made forest">חביות סאקה ויער מלאכותי</div>
           </div>
         </div>
       </div>
@@ -536,12 +685,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://cdn.cheapoguides.com/wp-content/uploads/sites/2/2017/05/omohara-building-omotesando-iStock-1140617218-1024x600.jpg" alt="שדרות אומוטסנדו">
+            <img class="activity-img" loading="lazy" src="https://cdn.cheapoguides.com/wp-content/uploads/sites/2/2017/05/omohara-building-omotesando-iStock-1140617218-1024x600.jpg" alt="Omotesando">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">11:00</div>
-            <div class="activity-name">שדרות אומוטסנדו</div>
-            <div class="activity-desc">שדרת עצים מרהיבה וחנויות מותגים באדריכלות מודרנית</div>
+            <div class="activity-name" data-he="שדרות אומוטסנדו" data-en="Omotesando Boulevard">שדרות אומוטסנדו</div>
+            <div class="activity-desc" data-he="שדרת עצים מרהיבה וחנויות מותגים באדריכלות מודרנית" data-en="Stunning tree-lined avenue & designer stores in modern architecture">שדרת עצים מרהיבה וחנויות מותגים באדריכלות מודרנית</div>
           </div>
         </div>
       </div>
@@ -549,12 +698,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800&q=80" alt="מעבר החציה שיבויה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800&q=80" alt="Shibuya Crossing">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">15:00</div>
-            <div class="activity-name">מעבר החציה שיבויה</div>
-            <div class="activity-desc">תצפית Mag's Park</div>
+            <div class="activity-name" data-he="מעבר החציה שיבויה" data-en="Shibuya Crossing">מעבר החציה שיבויה</div>
+            <div class="activity-desc" data-he="תצפית Mag's Park" data-en="Mag's Park viewpoint">תצפית Mag's Park</div>
           </div>
         </div>
       </div>
@@ -565,19 +714,22 @@ body {
   <section class="day-section" id="day-3">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">3</div>
-      <div class="day-info"><div class="day-date">13.3 · יום שישי</div><div class="day-city">טוקיו</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="13.3 · יום שישי" data-en="Mar 13 · Friday">13.3 · יום שישי</div>
+        <div class="day-city" data-he="טוקיו" data-en="Tokyo">טוקיו</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item has-img stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Tsukiji_Outer_Market_2.jpg/960px-Tsukiji_Outer_Market_2.jpg" alt="שוק צוקיג׳י">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Tsukiji_Outer_Market_2.jpg/960px-Tsukiji_Outer_Market_2.jpg" alt="Tsukiji Market">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">09:00</div>
-            <div class="activity-name">🐟 שוק צוקיג׳י החיצוני</div>
-            <div class="activity-desc">ארוחת בוקר בשוק — סושי טרי, טמאגויאקי, דאנגו, מוצ׳י</div>
+            <div class="activity-name" data-he="🐟 שוק צוקיג׳י החיצוני" data-en="🐟 Tsukiji Outer Market">🐟 שוק צוקיג׳י החיצוני</div>
+            <div class="activity-desc" data-he="ארוחת בוקר בשוק — סושי טרי, טמאגויאקי, דאנגו, מוצ׳י" data-en="Breakfast at the market — fresh sushi, tamagoyaki, dango, mochi">ארוחת בוקר בשוק — סושי טרי, טמאגויאקי, דאנגו, מוצ׳י</div>
           </div>
         </div>
       </div>
@@ -585,12 +737,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1701254293809-d56cf5e4248c?w=800&q=80" alt="גני המריקיו">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1701254293809-d56cf5e4248c?w=800&q=80" alt="Hamarikyu Gardens">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">11:00</div>
-            <div class="activity-name">גני המריקיו</div>
-            <div class="activity-desc">בית תה על אי קטן (5 דק׳ הליכה מצוקיג׳י)</div>
+            <div class="activity-name" data-he="גני המריקיו" data-en="Hamarikyu Gardens">גני המריקיו</div>
+            <div class="activity-desc" data-he="בית תה על אי קטן (5 דק׳ הליכה מצוקיג׳י)" data-en="Teahouse on a small island (5 min walk from Tsukiji)">בית תה על אי קטן (5 דק׳ הליכה מצוקיג׳י)</div>
           </div>
         </div>
       </div>
@@ -598,12 +750,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1565011729861-dc2ede75298d?w=800&q=80" alt="שייט בסומידה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1565011729861-dc2ede75298d?w=800&q=80" alt="Sumida River">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">12:30</div>
-            <div class="activity-name">שייט בסומידה</div>
-            <div class="activity-desc">Water Bus – תצפית מהנה</div>
+            <div class="activity-name" data-he="שייט בסומידה" data-en="Sumida River Cruise">שייט בסומידה</div>
+            <div class="activity-desc" data-he="Water Bus – תצפית מהנה" data-en="Water Bus — scenic boat ride">Water Bus – תצפית מהנה</div>
           </div>
         </div>
       </div>
@@ -611,12 +763,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Akihabara_Electric_Town%2C_Tokyo%2C_20240823_1617_5580.jpg/960px-Akihabara_Electric_Town%2C_Tokyo%2C_20240823_1617_5580.jpg" alt="אקיהאבארה">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Akihabara_Electric_Town%2C_Tokyo%2C_20240823_1617_5580.jpg/960px-Akihabara_Electric_Town%2C_Tokyo%2C_20240823_1617_5580.jpg" alt="Akihabara">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">14:30</div>
-            <div class="activity-name">⚡ אקיהאבארה</div>
-            <div class="activity-desc">רובע האלקטרוניקה והאנימה — חנויות רב-קומתיות, גאצ׳אפון, ארקייד</div>
+            <div class="activity-name" data-he="⚡ אקיהאבארה" data-en="⚡ Akihabara">⚡ אקיהאבארה</div>
+            <div class="activity-desc" data-he="רובע האלקטרוניקה והאנימה — חנויות רב-קומתיות, גאצ׳אפון, ארקייד" data-en="Electronics & anime district — multi-story shops, gachapon, arcades">רובע האלקטרוניקה והאנימה — חנויות רב-קומתיות, גאצ׳אפון, ארקייד</div>
           </div>
         </div>
       </div>
@@ -627,14 +779,17 @@ body {
   <section class="day-section" id="day-4">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">4</div>
-      <div class="day-info"><div class="day-date">14.3 · שבת</div><div class="day-city">קאמאקורה · טוקיו</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="14.3 · שבת" data-en="Mar 14 · Saturday">14.3 · שבת</div>
+        <div class="day-city" data-he="קאמאקורה · טוקיו" data-en="Kamakura · Tokyo">קאמאקורה · טוקיו</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item transport stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 09:30</div>
-          <div class="activity-name">Travel to Kamakura</div>
+          <div class="activity-name" data-he="נסיעה לקאמאקורה" data-en="Travel to Kamakura">נסיעה לקאמאקורה</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shinagawa → Kamakura — JR Yokosuka Line</span><span class="step-duration">~55 min</span></div>
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Arrive ~10:25</span></div>
@@ -645,12 +800,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Komachi_Dori-Kamakura.jpg/960px-Komachi_Dori-Kamakura.jpg" alt="רחוב קומאצ׳י-דורי">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Komachi_Dori-Kamakura.jpg/960px-Komachi_Dori-Kamakura.jpg" alt="Komachi-dori">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">10:30</div>
-            <div class="activity-name">🛍️ קומאצ׳י-דורי (Komachi-dori)</div>
-            <div class="activity-desc">רחוב קניות תוסס — חטיפים, גלידה מאצ׳ה, מזכרות</div>
+            <div class="activity-name" data-he="🛍️ קומאצ׳י-דורי" data-en="🛍️ Komachi-dori">🛍️ קומאצ׳י-דורי</div>
+            <div class="activity-desc" data-he="רחוב קניות תוסס — חטיפים, גלידה מאצ׳ה, מזכרות" data-en="Lively shopping street — snacks, matcha ice cream, souvenirs">רחוב קניות תוסס — חטיפים, גלידה מאצ׳ה, מזכרות</div>
           </div>
         </div>
       </div>
@@ -658,12 +813,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Tsurugaoka_Hachimangu_001.jpg/960px-Tsurugaoka_Hachimangu_001.jpg" alt="מקדש צורוגאוקה האצ׳ימאנגו">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Tsurugaoka_Hachimangu_001.jpg/960px-Tsurugaoka_Hachimangu_001.jpg" alt="Tsurugaoka Hachimangu">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">11:30</div>
-            <div class="activity-name">⛩️ צורוגאוקה האצ׳ימאנגו</div>
-            <div class="activity-desc">המקדש המרכזי של קאמאקורה — מדרגות מרשימות, גן מים, בריכת לוטוס</div>
+            <div class="activity-name" data-he="⛩️ צורוגאוקה האצ׳ימאנגו" data-en="⛩️ Tsurugaoka Hachimangu">⛩️ צורוגאוקה האצ׳ימאנגו</div>
+            <div class="activity-desc" data-he="המקדש המרכזי של קאמאקורה — מדרגות מרשימות, גן מים, בריכת לוטוס" data-en="Kamakura's main shrine — grand staircase, water garden, lotus pond">המקדש המרכזי של קאמאקורה — מדרגות מרשימות, גן מים, בריכת לוטוס</div>
           </div>
         </div>
       </div>
@@ -671,12 +826,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1707748892161-cd5702f1bbbd?w=800&q=80" alt="הבודהה הגדול">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1707748892161-cd5702f1bbbd?w=800&q=80" alt="Great Buddha">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">13:30</div>
-            <div class="activity-name">הבודהה הגדול (Kotoku-in)</div>
-            <div class="activity-desc">פסל ברונזה ענק בחוץ — 13 מטר גובה, אפשר להיכנס לתוכו</div>
+            <div class="activity-name" data-he="הבודהה הגדול (Kotoku-in)" data-en="Great Buddha (Kōtoku-in)">הבודהה הגדול (Kotoku-in)</div>
+            <div class="activity-desc" data-he="פסל ברונזה ענק בחוץ — 13 מטר גובה, אפשר להיכנס לתוכו" data-en="Giant outdoor bronze statue — 13m tall, you can go inside">פסל ברונזה ענק בחוץ — 13 מטר גובה, אפשר להיכנס לתוכו</div>
           </div>
         </div>
       </div>
@@ -684,12 +839,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/8/86/Hase-kannon_temple%2C_Kamakura%3B_July_2006_%2802%29.jpg" alt="מקדש האסה-דרה">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/8/86/Hase-kannon_temple%2C_Kamakura%3B_July_2006_%2802%29.jpg" alt="Hase-dera">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">14:30</div>
-            <div class="activity-name">🌸 האסה-דרה (Hase-dera)</div>
-            <div class="activity-desc">מקדש על צלע הר עם נוף לים, אלפי פסלוני ג׳יזו, מערת בנטן</div>
+            <div class="activity-name" data-he="🌸 האסה-דרה" data-en="🌸 Hase-dera Temple">🌸 האסה-דרה</div>
+            <div class="activity-desc" data-he="מקדש על צלע הר עם נוף לים, אלפי פסלוני ג׳יזו, מערת בנטן" data-en="Hillside temple with ocean views, thousands of Jizō statues, Benten Cave">מקדש על צלע הר עם נוף לים, אלפי פסלוני ג׳יזו, מערת בנטן</div>
           </div>
         </div>
       </div>
@@ -697,7 +852,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 16:00</div>
-          <div class="activity-name">Return to Tokyo</div>
+          <div class="activity-name" data-he="חזרה לטוקיו" data-en="Return to Tokyo">חזרה לטוקיו</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kamakura → Shinagawa — JR Yokosuka Line</span><span class="step-duration">~55 min</span></div>
           </div>
@@ -711,8 +866,8 @@ body {
     <div class="city-divider-bg"></div><div class="city-divider-border"></div>
     <div class="city-divider-content">
       <span class="city-divider-emoji">♨️</span>
-      <div class="city-divider-name">האקונה</div>
-      <div class="city-divider-sub">אונסנים · הרי הגעש · ריוקאן</div>
+      <div class="city-divider-name" data-he="האקונה" data-en="Hakone">האקונה</div>
+      <div class="city-divider-sub" data-he="אונסנים · הרי הגעש · ריוקאן" data-en="Hot Springs · Volcanoes · Ryokan">אונסנים · הרי הגעש · ריוקאן</div>
     </div>
   </div>
 
@@ -720,10 +875,13 @@ body {
   <section class="day-section" id="day-5">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">5</div>
-      <div class="day-info"><div class="day-date">15.3 · יום ראשון</div><div class="day-city">האקונה</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="15.3 · יום ראשון" data-en="Mar 15 · Sunday">15.3 · יום ראשון</div>
+        <div class="day-city" data-he="האקונה" data-en="Hakone">האקונה</div>
+      </div>
     </div></div>
     <div class="hotel-banner" data-animate>
-      <div class="hotel-banner-label">🏨 ריוקאן</div>
+      <div class="hotel-banner-label" data-he="🏨 ריוקאן" data-en="🏨 Ryokan">🏨 ריוקאן</div>
       <div class="hotel-banner-name">Hakone Onsen Guesthouse Tsutaya</div>
     </div>
     <div class="timeline">
@@ -731,7 +889,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 10:00</div>
-          <div class="activity-name">Check-out Tokyo → Hakone</div>
+          <div class="activity-name" data-he="צ׳ק אאוט טוקיו → האקונה" data-en="Check-out Tokyo → Hakone">צ׳ק אאוט טוקיו → האקונה</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shinjuku → Hakone-Yumoto — Odakyu Romancecar</span><span class="step-duration">~85 min</span></div>
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Arrive ~11:45</span></div>
@@ -742,12 +900,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1661997405495-d3ba07ad7cbc?w=800&q=80" alt="מוזיאון האקונה הפתוח">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1661997405495-d3ba07ad7cbc?w=800&q=80" alt="Hakone Open-Air Museum">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">12:30</div>
-            <div class="activity-name">מוזיאון האקונה הפתוח</div>
-            <div class="activity-desc">פסלים ומגדל הזכוכית</div>
+            <div class="activity-name" data-he="מוזיאון האקונה הפתוח" data-en="Hakone Open-Air Museum">מוזיאון האקונה הפתוח</div>
+            <div class="activity-desc" data-he="פסלים ומגדל הזכוכית" data-en="Sculptures & glass tower">פסלים ומגדל הזכוכית</div>
           </div>
         </div>
       </div>
@@ -755,12 +913,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Owakudani_-_Hakone_%2827369344357%29.jpg/960px-Owakudani_-_Hakone_%2827369344357%29.jpg" alt="עמק אוואקודאני">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Owakudani_-_Hakone_%2827369344357%29.jpg/960px-Owakudani_-_Hakone_%2827369344357%29.jpg" alt="Owakudani">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">15:00</div>
-            <div class="activity-name">🌋 אוואקודאני (Owakudani)</div>
-            <div class="activity-desc">עמק געשי עם עשן גופרית, ביצים שחורות מבושלות במעיינות חמים, נוף להר פוג׳י</div>
+            <div class="activity-name" data-he="🌋 אוואקודאני" data-en="🌋 Owakudani Valley">🌋 אוואקודאני</div>
+            <div class="activity-desc" data-he="עמק געשי עם עשן גופרית, ביצים שחורות מבושלות במעיינות חמים, נוף להר פוג׳י" data-en="Volcanic valley with sulfur steam, black eggs boiled in hot springs, Mt. Fuji views">עמק געשי עם עשן גופרית, ביצים שחורות מבושלות במעיינות חמים, נוף להר פוג׳י</div>
           </div>
         </div>
       </div>
@@ -768,12 +926,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1722229808606-d060bf607028?w=800&q=80" alt="ריוקאן – קאיסקי ואונסן">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1722229808606-d060bf607028?w=800&q=80" alt="Ryokan">
           </div>
           <div class="activity-card-body">
-            <div class="activity-time">ערב</div>
-            <div class="activity-name">ריוקאן – קאיסקי ואונסן</div>
-            <div class="activity-desc">ארוחת ערב מסורתית ורחצה באונסן</div>
+            <div class="activity-time" data-he="ערב" data-en="Evening">ערב</div>
+            <div class="activity-name" data-he="ריוקאן – קאיסקי ואונסן" data-en="Ryokan — Kaiseki & Onsen">ריוקאן – קאיסקי ואונסן</div>
+            <div class="activity-desc" data-he="ארוחת ערב מסורתית ורחצה באונסן" data-en="Traditional dinner & hot spring bath">ארוחת ערב מסורתית ורחצה באונסן</div>
           </div>
         </div>
       </div>
@@ -785,8 +943,8 @@ body {
     <div class="city-divider-bg"></div><div class="city-divider-border"></div>
     <div class="city-divider-content">
       <span class="city-divider-emoji">⛩️</span>
-      <div class="city-divider-name">קיוטו</div>
-      <div class="city-divider-sub">מקדשים · גיישות · במבוק</div>
+      <div class="city-divider-name" data-he="קיוטו" data-en="Kyoto">קיוטו</div>
+      <div class="city-divider-sub" data-he="מקדשים · גיישות · במבוק" data-en="Temples · Geisha · Bamboo">מקדשים · גיישות · במבוק</div>
     </div>
   </div>
 
@@ -794,10 +952,13 @@ body {
   <section class="day-section" id="day-6">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">6</div>
-      <div class="day-info"><div class="day-date">16.3 · יום שני</div><div class="day-city">האקונה ← קיוטו</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="16.3 · יום שני" data-en="Mar 16 · Monday">16.3 · יום שני</div>
+        <div class="day-city" data-he="האקונה → קיוטו" data-en="Hakone → Kyoto">האקונה → קיוטו</div>
+      </div>
     </div></div>
     <div class="hotel-banner" data-animate>
-      <div class="hotel-banner-label">🏨 מלון</div>
+      <div class="hotel-banner-label" data-he="🏨 מלון" data-en="🏨 Hotel">🏨 מלון</div>
       <div class="hotel-banner-name">The Royal Park Canvas – Kyoto Nijo</div>
       <div class="hotel-banner-gym">💪 Gold's Gym Kyoto Nijo (24/7)</div>
     </div>
@@ -806,11 +967,11 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 09:00</div>
-          <div class="activity-name">Check-out Hakone → Kyoto</div>
+          <div class="activity-name" data-he="צ׳ק אאוט האקונה → קיוטו" data-en="Check-out Hakone → Kyoto">צ׳ק אאוט האקונה → קיוטו</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Hakone → Odawara — Bus/Train</span><span class="step-duration">~30 min</span></div>
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Odawara → Kyoto — Shinkansen Hikari</span><span class="step-duration">~2 hrs</span></div>
-            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">📦 Takyubin — send luggage day before (from ryokan, Day 5 morning)</span></div>
+            <div class="route-step"><span class="step-icon">▶</span><span class="step-text">📦 Takyubin — send luggage day before</span></div>
           </div>
         </div>
       </div>
@@ -818,7 +979,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card hotel-card">
           <div class="activity-time">13:00</div>
-          <div class="activity-name">צ׳ק אין בקיוטו</div>
+          <div class="activity-name" data-he="צ׳ק אין בקיוטו" data-en="Check-in Kyoto">צ׳ק אין בקיוטו</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kyoto Station → Hotel — Taxi/Bus</span><span class="step-duration">~15 min</span></div>
           </div>
@@ -828,12 +989,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Nishiki_ichiba_kyoto.jpg/960px-Nishiki_ichiba_kyoto.jpg" alt="שוק נישיקי">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Nishiki_ichiba_kyoto.jpg/960px-Nishiki_ichiba_kyoto.jpg" alt="Nishiki Market">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">15:00</div>
-            <div class="activity-name">🏮 שוק נישיקי (Nishiki Market)</div>
-            <div class="activity-desc">"המטבח של קיוטו" — 400 מטר של דוכני אוכל, חמוצים, מוצ׳י, סכינים</div>
+            <div class="activity-name" data-he="🏮 שוק נישיקי" data-en="🏮 Nishiki Market">🏮 שוק נישיקי</div>
+            <div class="activity-desc" data-he="&quot;המטבח של קיוטו&quot; — 400 מטר של דוכני אוכל, חמוצים, מוצ׳י, סכינים" data-en="'Kyoto's Kitchen' — 400m of food stalls, pickles, mochi, knives">"המטבח של קיוטו" — 400 מטר של דוכני אוכל, חמוצים, מוצ׳י, סכינים</div>
           </div>
         </div>
       </div>
@@ -841,12 +1002,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pontocho_by_Wolfiewolf_in_Nabeyacho%2C_Kyoto.jpg/960px-Pontocho_by_Wolfiewolf_in_Nabeyacho%2C_Kyoto.jpg" alt="סמטת פונטוצ׳ו">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pontocho_by_Wolfiewolf_in_Nabeyacho%2C_Kyoto.jpg/960px-Pontocho_by_Wolfiewolf_in_Nabeyacho%2C_Kyoto.jpg" alt="Pontocho">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">🌙 18:00</div>
-            <div class="activity-name">סמטת פונטוצ׳ו + נהר קאמו</div>
-            <div class="activity-desc">סמטה צרה עם פנסי נייר, מסעדות על הנהר — שקיעה על גדות הקאמו</div>
+            <div class="activity-name" data-he="סמטת פונטוצ׳ו + נהר קאמו" data-en="Pontochō Alley + Kamo River">סמטת פונטוצ׳ו + נהר קאמו</div>
+            <div class="activity-desc" data-he="סמטה צרה עם פנסי נייר, מסעדות על הנהר — שקיעה על גדות הקאמו" data-en="Narrow alley with paper lanterns, riverside restaurants — sunset on the Kamo banks">סמטה צרה עם פנסי נייר, מסעדות על הנהר — שקיעה על גדות הקאמו</div>
           </div>
         </div>
       </div>
@@ -857,19 +1018,22 @@ body {
   <section class="day-section" id="day-7">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">7</div>
-      <div class="day-info"><div class="day-date">17.3 · יום שלישי</div><div class="day-city">קיוטו</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="17.3 · יום שלישי" data-en="Mar 17 · Tuesday">17.3 · יום שלישי</div>
+        <div class="day-city" data-he="קיוטו" data-en="Kyoto">קיוטו</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item has-img stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Kiyomizu.jpg" alt="קיומיזו-דרה">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Kiyomizu.jpg" alt="Kiyomizu-dera">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">08:00</div>
-            <div class="activity-name">קיומיזו-דרה</div>
-            <div class="activity-desc">מרפסת עץ עצומה</div>
+            <div class="activity-name" data-he="קיומיזו-דרה" data-en="Kiyomizu-dera">קיומיזו-דרה</div>
+            <div class="activity-desc" data-he="מרפסת עץ עצומה" data-en="Massive wooden terrace">מרפסת עץ עצומה</div>
           </div>
         </div>
       </div>
@@ -877,12 +1041,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80" alt="ניננזאקה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80" alt="Ninenzaka">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">10:00</div>
-            <div class="activity-name">ניננזאקה</div>
-            <div class="activity-desc">רחובות תה עתיקים</div>
+            <div class="activity-name" data-he="ניננזאקה" data-en="Ninenzaka">ניננזאקה</div>
+            <div class="activity-desc" data-he="רחובות תה עתיקים" data-en="Ancient tea streets">רחובות תה עתיקים</div>
           </div>
         </div>
       </div>
@@ -890,12 +1054,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1757937764406-cf5df300cda3?w=800&q=80" alt="פושימי אינארי">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1757937764406-cf5df300cda3?w=800&q=80" alt="Fushimi Inari">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">13:30</div>
-            <div class="activity-name">פושימי אינארי</div>
-            <div class="activity-desc">אלפי שערים כתומים</div>
+            <div class="activity-name" data-he="פושימי אינארי" data-en="Fushimi Inari">פושימי אינארי</div>
+            <div class="activity-desc" data-he="אלפי שערים כתומים" data-en="Thousands of orange torii gates">אלפי שערים כתומים</div>
           </div>
         </div>
       </div>
@@ -906,19 +1070,22 @@ body {
   <section class="day-section" id="day-8">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">8</div>
-      <div class="day-info"><div class="day-date">18.3 · יום רביעי</div><div class="day-city">קיוטו — ארשיאמה</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="18.3 · יום רביעי" data-en="Mar 18 · Wednesday">18.3 · יום רביעי</div>
+        <div class="day-city" data-he="קיוטו — ארשיאמה" data-en="Kyoto — Arashiyama">קיוטו — ארשיאמה</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item has-img stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://cdn.eureka.org.il/images/w400/8482934015.jpg" alt="יער הבמבוק">
+            <img class="activity-img" loading="lazy" src="https://cdn.eureka.org.il/images/w400/8482934015.jpg" alt="Bamboo Forest">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">09:00</div>
-            <div class="activity-name">🌿 יער הבמבוק (ארשיאמה)</div>
-            <div class="activity-desc">שביל בתוך במבוק ענק</div>
+            <div class="activity-name" data-he="🌿 יער הבמבוק (ארשיאמה)" data-en="🌿 Bamboo Forest (Arashiyama)">🌿 יער הבמבוק (ארשיאמה)</div>
+            <div class="activity-desc" data-he="שביל בתוך במבוק ענק" data-en="Path through towering bamboo">שביל בתוך במבוק ענק</div>
           </div>
         </div>
       </div>
@@ -926,12 +1093,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1699011404463-a881a7cd357f?w=800&q=80" alt="מקדש טנריו-ג׳י">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1699011404463-a881a7cd357f?w=800&q=80" alt="Tenryū-ji">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">10:30</div>
-            <div class="activity-name">מקדש טנריו-ג׳י – גן</div>
-            <div class="activity-desc">גן זן מהתקופה של מוסו סוסקי</div>
+            <div class="activity-name" data-he="מקדש טנריו-ג׳י – גן" data-en="Tenryū-ji Temple — Garden">מקדש טנריו-ג׳י – גן</div>
+            <div class="activity-desc" data-he="גן זן מהתקופה של מוסו סוסקי" data-en="Zen garden from the Musō Soseki era">גן זן מהתקופה של מוסו סוסקי</div>
           </div>
         </div>
       </div>
@@ -939,12 +1106,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Kinkaku-ji_in_November_2016_-02.jpg/960px-Kinkaku-ji_in_November_2016_-02.jpg" alt="קינקאקו-ג׳י — פביליון הזהב">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Kinkaku-ji_in_November_2016_-02.jpg/960px-Kinkaku-ji_in_November_2016_-02.jpg" alt="Kinkaku-ji">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">12:30</div>
-            <div class="activity-name">🥇 קינקאקו-ג׳י (פביליון הזהב)</div>
-            <div class="activity-desc">הסמל של קיוטו — מקדש מוזהב על שפת אגם מראה, גן יפני מושלם. ~30 דק׳ אוטובוס מארשיאמה</div>
+            <div class="activity-name" data-he="🥇 קינקאקו-ג׳י (פביליון הזהב)" data-en="🥇 Kinkaku-ji (Golden Pavilion)">🥇 קינקאקו-ג׳י (פביליון הזהב)</div>
+            <div class="activity-desc" data-he="הסמל של קיוטו — מקדש מוזהב על שפת אגם מראה, גן יפני מושלם. ~30 דק׳ אוטובוס מארשיאמה" data-en="Kyoto's icon — golden temple on a mirror lake, perfect Japanese garden. ~30 min bus from Arashiyama">הסמל של קיוטו — מקדש מוזהב על שפת אגם מראה, גן יפני מושלם. ~30 דק׳ אוטובוס מארשיאמה</div>
           </div>
         </div>
       </div>
@@ -952,12 +1119,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1569415097756-423e72a60224?w=800&q=80" alt="פביליון הכסף">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1569415097756-423e72a60224?w=800&q=80" alt="Ginkaku-ji">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">14:30</div>
-            <div class="activity-name">פביליון הכסף (גינקאקו-ג׳י)</div>
-            <div class="activity-desc">גן חול יפני, נתיב פילוסופים</div>
+            <div class="activity-name" data-he="פביליון הכסף (גינקאקו-ג׳י)" data-en="Ginkaku-ji (Silver Pavilion)">פביליון הכסף (גינקאקו-ג׳י)</div>
+            <div class="activity-desc" data-he="גן חול יפני, נתיב פילוסופים" data-en="Japanese sand garden, Philosopher's Path">גן חול יפני, נתיב פילוסופים</div>
           </div>
         </div>
       </div>
@@ -969,8 +1136,8 @@ body {
     <div class="city-divider-bg"></div><div class="city-divider-border"></div>
     <div class="city-divider-content">
       <span class="city-divider-emoji">⚔️</span>
-      <div class="city-divider-name">קנזאווה</div>
-      <div class="city-divider-sub">סמוראים · גיישות · גנים</div>
+      <div class="city-divider-name" data-he="קנזאווה" data-en="Kanazawa">קנזאווה</div>
+      <div class="city-divider-sub" data-he="סמוראים · גיישות · גנים" data-en="Samurai · Geisha · Gardens">סמוראים · גיישות · גנים</div>
     </div>
   </div>
 
@@ -978,10 +1145,13 @@ body {
   <section class="day-section" id="day-9">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">9</div>
-      <div class="day-info"><div class="day-date">19.3 · יום חמישי</div><div class="day-city">קיוטו ← קנזאווה</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="19.3 · יום חמישי" data-en="Mar 19 · Thursday">19.3 · יום חמישי</div>
+        <div class="day-city" data-he="קיוטו → קנזאווה" data-en="Kyoto → Kanazawa">קיוטו → קנזאווה</div>
+      </div>
     </div></div>
     <div class="hotel-banner" data-animate>
-      <div class="hotel-banner-label">🏨 מלון</div>
+      <div class="hotel-banner-label" data-he="🏨 מלון" data-en="🏨 Hotel">🏨 מלון</div>
       <div class="hotel-banner-name">The HOTEL SANRAKU KANAZAWA</div>
       <div class="hotel-banner-gym">💪 Central Fitness Club Kanazawa (~10 min walk)</div>
     </div>
@@ -990,7 +1160,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 09:00</div>
-          <div class="activity-name">☀️ Check-out Kyoto → Kanazawa</div>
+          <div class="activity-name" data-he="☀️ צ׳ק אאוט קיוטו → קנזאווה" data-en="☀️ Check-out Kyoto → Kanazawa">☀️ צ׳ק אאוט קיוטו → קנזאווה</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kyoto → Tsuruga — Limited Express Thunderbird</span><span class="step-duration">~80 min</span></div>
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Tsuruga → Kanazawa — Hokuriku Shinkansen</span><span class="step-duration">~45 min</span></div>
@@ -1002,12 +1172,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1599556096681-148e80ba8f75?w=800&q=80" alt="שוק אומיצ׳ו">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1599556096681-148e80ba8f75?w=800&q=80" alt="Omicho Market">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">12:00</div>
-            <div class="activity-name">🐟 צ׳ק אין + ארוחת צהריים</div>
-            <div class="activity-desc">אוכל ים טרי בשוק אומיצ׳ו (Omicho Market)</div>
+            <div class="activity-name" data-he="🐟 צ׳ק אין + ארוחת צהריים" data-en="🐟 Check-in + Lunch">🐟 צ׳ק אין + ארוחת צהריים</div>
+            <div class="activity-desc" data-he="אוכל ים טרי בשוק אומיצ׳ו (Omicho Market)" data-en="Fresh seafood at Omicho Market">אוכל ים טרי בשוק אומיצ׳ו (Omicho Market)</div>
           </div>
         </div>
       </div>
@@ -1015,12 +1185,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://cdn.getyourguide.com/image/format=auto,dpr=2/tour_img/4a53d9a6f695f9d3.jpeg" alt="רובע הסמוראי נגמאצ׳י">
+            <img class="activity-img" loading="lazy" src="https://cdn.getyourguide.com/image/format=auto,dpr=2/tour_img/4a53d9a6f695f9d3.jpeg" alt="Nagamachi">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">14:00</div>
-            <div class="activity-name">⚔️ רובע הסמוראי נגמאצ׳י</div>
-            <div class="activity-desc">רובע סמוראי משומר – בתי סמוראי מקוריים, חומות אדמה, תעלות מים</div>
+            <div class="activity-name" data-he="⚔️ רובע הסמוראי נגמאצ׳י" data-en="⚔️ Nagamachi Samurai District">⚔️ רובע הסמוראי נגמאצ׳י</div>
+            <div class="activity-desc" data-he="רובע סמוראי משומר – בתי סמוראי מקוריים, חומות אדמה, תעלות מים" data-en="Preserved samurai quarter — original houses, earthen walls, water canals">רובע סמוראי משומר – בתי סמוראי מקוריים, חומות אדמה, תעלות מים</div>
           </div>
         </div>
       </div>
@@ -1028,12 +1198,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1627304827615-3a05fafaed7a?w=800&q=80" alt="גן קנרוקואן">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1627304827615-3a05fafaed7a?w=800&q=80" alt="Kenrokuen">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">16:00</div>
-            <div class="activity-name">🏯 גן קנרוקואן (Kenrokuen)</div>
-            <div class="activity-desc">אחד משלושת הגנים היפים ביותר ביפן</div>
+            <div class="activity-name" data-he="🏯 גן קנרוקואן" data-en="🏯 Kenrokuen Garden">🏯 גן קנרוקואן</div>
+            <div class="activity-desc" data-he="אחד משלושת הגנים היפים ביותר ביפן" data-en="One of Japan's three most beautiful gardens">אחד משלושת הגנים היפים ביותר ביפן</div>
           </div>
         </div>
       </div>
@@ -1041,12 +1211,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1684695414975-2f14316c70e8?w=800&q=80" alt="רובע היגאשי צ׳איה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1684695414975-2f14316c70e8?w=800&q=80" alt="Higashi Chaya">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">17:30</div>
-            <div class="activity-name">רובע היגאשי צ׳איה</div>
-            <div class="activity-desc">רובע גיישות היסטורי, בתי תה</div>
+            <div class="activity-name" data-he="רובע היגאשי צ׳איה" data-en="Higashi Chaya District">רובע היגאשי צ׳איה</div>
+            <div class="activity-desc" data-he="רובע גיישות היסטורי, בתי תה" data-en="Historic geisha district, teahouses">רובע גיישות היסטורי, בתי תה</div>
           </div>
         </div>
       </div>
@@ -1058,8 +1228,8 @@ body {
     <div class="city-divider-bg"></div><div class="city-divider-border"></div>
     <div class="city-divider-content">
       <span class="city-divider-emoji">🏔️</span>
-      <div class="city-divider-name">האלפים היפניים</div>
-      <div class="city-divider-sub">שיראקאווה-גו · טקיאמה</div>
+      <div class="city-divider-name" data-he="האלפים היפניים" data-en="Japanese Alps">האלפים היפניים</div>
+      <div class="city-divider-sub" data-he="שיראקאווה-גו · טקיאמה" data-en="Shirakawa-go · Takayama">שיראקאווה-גו · טקיאמה</div>
     </div>
   </div>
 
@@ -1067,10 +1237,13 @@ body {
   <section class="day-section" id="day-10">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">10</div>
-      <div class="day-info"><div class="day-date">20.3 · יום שישי</div><div class="day-city">שיראקאווה-גו ← טקיאמה</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="20.3 · יום שישי" data-en="Mar 20 · Friday">20.3 · יום שישי</div>
+        <div class="day-city" data-he="שיראקאווה-גו → טקיאמה" data-en="Shirakawa-go → Takayama">שיראקאווה-גו → טקיאמה</div>
+      </div>
     </div></div>
     <div class="hotel-banner" data-animate>
-      <div class="hotel-banner-label">🏨 מלון</div>
+      <div class="hotel-banner-label" data-he="🏨 מלון" data-en="🏨 Hotel">🏨 מלון</div>
       <div class="hotel-banner-name">FAV LUX Hida Takayama</div>
       <div class="hotel-banner-gym">💪 Anytime Fitness Takayama (24/7, ~12 min walk)</div>
     </div>
@@ -1079,7 +1252,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚌 08:30</div>
-          <div class="activity-name">Check-out Kanazawa → Shirakawa-go</div>
+          <div class="activity-name" data-he="צ׳ק אאוט קנזאווה → שיראקאווה-גו" data-en="Check-out Kanazawa → Shirakawa-go">צ׳ק אאוט קנזאווה → שיראקאווה-גו</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kanazawa → Shirakawa-go — Nohi Bus</span><span class="step-duration">~1 hr 15 min</span></div>
           </div>
@@ -1089,12 +1262,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/SHIRAKAWA_GOU.JPG" alt="כפר שיראקאווה-גו">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/SHIRAKAWA_GOU.JPG" alt="Shirakawa-go">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">10:00</div>
-            <div class="activity-name">🏔️ כפר שיראקאווה-גו</div>
-            <div class="activity-desc">אלפים יפניים – כפר מורשת עולמית UNESCO, בתים בסגנון גאסשו-זוקורי (גגות קש תלולים)</div>
+            <div class="activity-name" data-he="🏔️ כפר שיראקאווה-גו" data-en="🏔️ Shirakawa-go Village">🏔️ כפר שיראקאווה-גו</div>
+            <div class="activity-desc" data-he="אלפים יפניים – כפר מורשת עולמית UNESCO, בתים בסגנון גאסשו-זוקורי (גגות קש תלולים)" data-en="Japanese Alps — UNESCO World Heritage village, gassho-zukuri style houses (steep thatched roofs)">אלפים יפניים – כפר מורשת עולמית UNESCO, בתים בסגנון גאסשו-זוקורי (גגות קש תלולים)</div>
           </div>
         </div>
       </div>
@@ -1112,20 +1285,20 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card">
           <div class="activity-time">13:00</div>
-          <div class="activity-name">🥩 צ׳ק אין טקיאמה + ארוחת צהריים</div>
-          <div class="activity-desc">רמן מקומי או הידה-גיו (בקר מקומי מפורסם)</div>
+          <div class="activity-name" data-he="🥩 צ׳ק אין טקיאמה + ארוחת צהריים" data-en="🥩 Check-in Takayama + Lunch">🥩 צ׳ק אין טקיאמה + ארוחת צהריים</div>
+          <div class="activity-desc" data-he="רמן מקומי או הידה-גיו (בקר מקומי מפורסם)" data-en="Local ramen or Hida beef (famous local cattle)">רמן מקומי או הידה-גיו (בקר מקומי מפורסם)</div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-5" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1751004534704-175ce18ef251?w=800&q=80" alt="העיר העתיקה של טקיאמה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1751004534704-175ce18ef251?w=800&q=80" alt="Takayama Old Town">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">14:30</div>
-            <div class="activity-name">העיר העתיקה של טקיאמה</div>
-            <div class="activity-desc">רחובות עץ מתקופת אדו, מבשלות סאקה, חנויות מלאכת יד (Sanmachi Suji)</div>
+            <div class="activity-name" data-he="העיר העתיקה של טקיאמה" data-en="Takayama Old Town">העיר העתיקה של טקיאמה</div>
+            <div class="activity-desc" data-he="רחובות עץ מתקופת אדו, מבשלות סאקה, חנויות מלאכת יד (Sanmachi Suji)" data-en="Edo-period wooden streets, sake breweries, craft shops (Sanmachi Suji)">רחובות עץ מתקופת אדו, מבשלות סאקה, חנויות מלאכת יד (Sanmachi Suji)</div>
           </div>
         </div>
       </div>
@@ -1133,12 +1306,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/19/78/59/be/caption.jpg?w=900&h=500&s=1" alt="יאטאי קאיקאן">
+            <img class="activity-img" loading="lazy" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/19/78/59/be/caption.jpg?w=900&h=500&s=1" alt="Yatai Kaikan">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">16:00</div>
-            <div class="activity-name">יאטאי קאיקאן</div>
-            <div class="activity-desc">מרכבות פסטיבל מפוארות (Takayama Festival Float Exhibition Hall)</div>
+            <div class="activity-name" data-he="יאטאי קאיקאן" data-en="Yatai Kaikan">יאטאי קאיקאן</div>
+            <div class="activity-desc" data-he="מרכבות פסטיבל מפוארות (Takayama Festival Float Exhibition Hall)" data-en="Ornate festival floats (Takayama Festival Float Exhibition Hall)">מרכבות פסטיבל מפוארות (Takayama Festival Float Exhibition Hall)</div>
           </div>
         </div>
       </div>
@@ -1149,19 +1322,22 @@ body {
   <section class="day-section" id="day-11">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">11</div>
-      <div class="day-info"><div class="day-date">21.3 · שבת</div><div class="day-city">טקיאמה ← אוסקה</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="21.3 · שבת" data-en="Mar 21 · Saturday">21.3 · שבת</div>
+        <div class="day-city" data-he="טקיאמה → אוסקה" data-en="Takayama → Osaka">טקיאמה → אוסקה</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item has-img stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1764672277000-5b30f1067b99?w=800&q=80" alt="שוק הבוקר של טקיאמה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1764672277000-5b30f1067b99?w=800&q=80" alt="Takayama Morning Market">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">🌅 08:00</div>
-            <div class="activity-name">שוק הבוקר של טקיאמה</div>
-            <div class="activity-desc">ירקות מקומיים, חטיפים, מלאכת יד (Miyagawa Morning Market)</div>
+            <div class="activity-name" data-he="שוק הבוקר של טקיאמה" data-en="Takayama Morning Market">שוק הבוקר של טקיאמה</div>
+            <div class="activity-desc" data-he="ירקות מקומיים, חטיפים, מלאכת יד (Miyagawa Morning Market)" data-en="Local vegetables, snacks, crafts (Miyagawa Morning Market)">ירקות מקומיים, חטיפים, מלאכת יד (Miyagawa Morning Market)</div>
           </div>
         </div>
       </div>
@@ -1169,7 +1345,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 10:00</div>
-          <div class="activity-name">Check-out Takayama → Osaka</div>
+          <div class="activity-name" data-he="צ׳ק אאוט טקיאמה → אוסקה" data-en="Check-out Takayama → Osaka">צ׳ק אאוט טקיאמה → אוסקה</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Takayama → Nagoya — JR Hida</span><span class="step-duration">~2 hrs 15 min</span></div>
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Nagoya → Shin-Osaka — Tokaido Shinkansen</span><span class="step-duration">~50 min</span></div>
@@ -1185,15 +1361,15 @@ body {
     <div class="city-divider-bg"></div><div class="city-divider-border"></div>
     <div class="city-divider-content">
       <span class="city-divider-emoji">🌃</span>
-      <div class="city-divider-name">אוסקה</div>
-      <div class="city-divider-sub">אוכל רחוב · ניאונים · אנרגיה</div>
+      <div class="city-divider-name" data-he="אוסקה" data-en="Osaka">אוסקה</div>
+      <div class="city-divider-sub" data-he="אוכל רחוב · ניאונים · אנרגיה" data-en="Street Food · Neon · Energy">אוכל רחוב · ניאונים · אנרגיה</div>
     </div>
   </div>
 
-  <!-- ═════ DAY 11 continued (Osaka arrival) ═════ -->
+  <!-- ═════ DAY 11 continued — Osaka arrival ═════ -->
   <section class="day-section">
     <div class="hotel-banner" data-animate>
-      <div class="hotel-banner-label">🏨 מלון</div>
+      <div class="hotel-banner-label" data-he="🏨 מלון" data-en="🏨 Hotel">🏨 מלון</div>
       <div class="hotel-banner-name">Hotel Keihan Namba Grande</div>
       <div class="hotel-banner-gym">💪 Gold's Gym Shinsaibashi (24/7) / Torque Gym Namba</div>
     </div>
@@ -1202,20 +1378,20 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card hotel-card">
           <div class="activity-time">14:00</div>
-          <div class="activity-name">צ׳ק אין אוסקה</div>
-          <div class="activity-desc">הגעה למלון והתארגנות</div>
+          <div class="activity-name" data-he="צ׳ק אין אוסקה" data-en="Check-in Osaka">צ׳ק אין אוסקה</div>
+          <div class="activity-desc" data-he="הגעה למלון והתארגנות" data-en="Arrive at hotel and settle in">הגעה למלון והתארגנות</div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-2" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1571242352061-7611fbafbd42?w=800&q=80" alt="דוטונבורי">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1571242352061-7611fbafbd42?w=800&q=80" alt="Dotonbori">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">🌃 16:00</div>
-            <div class="activity-name">דוטונבורי</div>
-            <div class="activity-desc">רחוב ניאונים ואוכל רחוב — טאקויאקי, אוקונומיאקי</div>
+            <div class="activity-name" data-he="דוטונבורי" data-en="Dotonbori">דוטונבורי</div>
+            <div class="activity-desc" data-he="רחוב ניאונים ואוכל רחוב — טאקויאקי, אוקונומיאקי" data-en="Neon lights & street food — takoyaki, okonomiyaki">רחוב ניאונים ואוכל רחוב — טאקויאקי, אוקונומיאקי</div>
           </div>
         </div>
       </div>
@@ -1226,14 +1402,17 @@ body {
   <section class="day-section" id="day-12">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">12</div>
-      <div class="day-info"><div class="day-date">22.3 · יום ראשון</div><div class="day-city">הירושימה · מייג׳ימה</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="22.3 · יום ראשון" data-en="Mar 22 · Sunday">22.3 · יום ראשון</div>
+        <div class="day-city" data-he="הירושימה · מייג׳ימה" data-en="Hiroshima · Miyajima">הירושימה · מייג׳ימה</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item transport stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 07:30</div>
-          <div class="activity-name">Day Trip: Hiroshima & Miyajima</div>
+          <div class="activity-name" data-he="יום טיול: הירושימה ומייג׳ימה" data-en="Day Trip: Hiroshima & Miyajima">יום טיול: הירושימה ומייג׳ימה</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Namba → Shin-Osaka — Midosuji Metro Line</span><span class="step-duration">~10 min</span></div>
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shin-Osaka → Hiroshima — Sanyo Shinkansen</span><span class="step-duration">~1 hr 20 min</span></div>
@@ -1245,12 +1424,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1693229549285-d4a402df1db2?w=800&q=80" alt="פארק השלום – כיפת הפצצה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1693229549285-d4a402df1db2?w=800&q=80" alt="Peace Park">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">09:30</div>
-            <div class="activity-name">פארק השלום – כיפת הפצצה</div>
-            <div class="activity-desc">אנדרטה, מוזיאון השלום וגן הזיכרון</div>
+            <div class="activity-name" data-he="פארק השלום – כיפת הפצצה" data-en="Peace Park — A-Bomb Dome">פארק השלום – כיפת הפצצה</div>
+            <div class="activity-desc" data-he="אנדרטה, מוזיאון השלום וגן הזיכרון" data-en="Memorial, Peace Museum & Memorial Garden">אנדרטה, מוזיאון השלום וגן הזיכרון</div>
           </div>
         </div>
       </div>
@@ -1258,12 +1437,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1659466253566-f1c9a6c5e85a?w=800&q=80" alt="אי מייג׳ימה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1659466253566-f1c9a6c5e85a?w=800&q=80" alt="Miyajima">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">12:30</div>
-            <div class="activity-name">⛩️ אי מייג׳ימה</div>
-            <div class="activity-desc">שער טורי צף, צבאים, אוכל רחוב (~50 דק׳ רכבת + מעבורת מהירושימה)</div>
+            <div class="activity-name" data-he="⛩️ אי מייג׳ימה" data-en="⛩️ Miyajima Island">⛩️ אי מייג׳ימה</div>
+            <div class="activity-desc" data-he="שער טורי צף, צבאים, אוכל רחוב (~50 דק׳ רכבת + מעבורת מהירושימה)" data-en="Floating torii gate, deer, street food (~50 min train + ferry from Hiroshima)">שער טורי צף, צבאים, אוכל רחוב (~50 דק׳ רכבת + מעבורת מהירושימה)</div>
           </div>
         </div>
       </div>
@@ -1271,7 +1450,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 18:00</div>
-          <div class="activity-name">Return to Osaka</div>
+          <div class="activity-name" data-he="חזרה לאוסקה" data-en="Return to Osaka">חזרה לאוסקה</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Hiroshima → Shin-Osaka — Sanyo Shinkansen</span><span class="step-duration">~1 hr 20 min</span></div>
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Shin-Osaka → Namba — Midosuji Metro Line</span><span class="step-duration">~10 min</span></div>
@@ -1285,14 +1464,17 @@ body {
   <section class="day-section" id="day-13">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">13</div>
-      <div class="day-info"><div class="day-date">23.3 · יום שני</div><div class="day-city">נארה · אוסקה</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="23.3 · יום שני" data-en="Mar 23 · Monday">23.3 · יום שני</div>
+        <div class="day-city" data-he="נארה · אוסקה" data-en="Nara · Osaka">נארה · אוסקה</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item transport stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 09:00</div>
-          <div class="activity-name">🦌 Day Trip: Nara</div>
+          <div class="activity-name" data-he="🦌 יום טיול: נארה" data-en="🦌 Day Trip: Nara">🦌 יום טיול: נארה</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Osaka-Namba → Kintetsu-Nara — Kintetsu Railway</span><span class="step-duration">~35 min</span></div>
           </div>
@@ -1302,12 +1484,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1693380767492-00fb0bcc4ce6?w=800&q=80" alt="פארק נארה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1693380767492-00fb0bcc4ce6?w=800&q=80" alt="Nara Park">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">10:00</div>
-            <div class="activity-name">פארק נארה</div>
-            <div class="activity-desc">צבאים משתחווים</div>
+            <div class="activity-name" data-he="פארק נארה" data-en="Nara Park">פארק נארה</div>
+            <div class="activity-desc" data-he="צבאים משתחווים" data-en="Bowing deer">צבאים משתחווים</div>
           </div>
         </div>
       </div>
@@ -1315,12 +1497,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1704199051944-9084749c9ee5?w=800&q=80" alt="טודאי-ג׳י">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1704199051944-9084749c9ee5?w=800&q=80" alt="Tōdai-ji">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">11:30</div>
-            <div class="activity-name">טודאי-ג׳י</div>
-            <div class="activity-desc">בודהה ענק</div>
+            <div class="activity-name" data-he="טודאי-ג׳י" data-en="Tōdai-ji">טודאי-ג׳י</div>
+            <div class="activity-desc" data-he="בודהה ענק" data-en="Giant Buddha">בודהה ענק</div>
           </div>
         </div>
       </div>
@@ -1328,7 +1510,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">14:00</div>
-          <div class="activity-name">Return to Osaka</div>
+          <div class="activity-name" data-he="חזרה לאוסקה" data-en="Return to Osaka">חזרה לאוסקה</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kintetsu-Nara → Osaka-Namba — Kintetsu Railway</span><span class="step-duration">~35 min</span></div>
           </div>
@@ -1338,12 +1520,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1580138051672-325eb98b2749?w=800&q=80" alt="טירת אוסקה">
+            <img class="activity-img" loading="lazy" src="https://images.unsplash.com/photo-1580138051672-325eb98b2749?w=800&q=80" alt="Osaka Castle">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">15:30</div>
-            <div class="activity-name">🏯 טירת אוסקה</div>
-            <div class="activity-desc">הטירה והגן סביבה</div>
+            <div class="activity-name" data-he="🏯 טירת אוסקה" data-en="🏯 Osaka Castle">🏯 טירת אוסקה</div>
+            <div class="activity-desc" data-he="הטירה והגן סביבה" data-en="The castle & surrounding gardens">הטירה והגן סביבה</div>
           </div>
         </div>
       </div>
@@ -1354,30 +1536,33 @@ body {
   <section class="day-section" id="day-14">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">14</div>
-      <div class="day-info"><div class="day-date">24.3 · יום שלישי</div><div class="day-city">אוסקה ← טוקיו</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="24.3 · יום שלישי" data-en="Mar 24 · Tuesday">24.3 · יום שלישי</div>
+        <div class="day-city" data-he="אוסקה → טוקיו" data-en="Osaka → Tokyo">אוסקה → טוקיו</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item hotel stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card hotel-card">
           <div class="activity-time">09:00</div>
-          <div class="activity-name">צ׳ק אאוט + השארת מזוודות</div>
-          <div class="activity-desc">השארת מזוודות בלובי המלון עד 16:00</div>
+          <div class="activity-name" data-he="צ׳ק אאוט + השארת מזוודות" data-en="Check-out + Luggage Storage">צ׳ק אאוט + השארת מזוודות</div>
+          <div class="activity-desc" data-he="השארת מזוודות בלובי המלון עד 16:00" data-en="Store luggage in hotel lobby until 16:00">השארת מזוודות בלובי המלון עד 16:00</div>
         </div>
       </div>
       <div class="timeline-item stagger-2" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card">
           <div class="activity-time">10:00</div>
-          <div class="activity-name">יום חופשי, שופינג</div>
-          <div class="activity-desc">חדר כושר, אוכל טעים, קניות</div>
+          <div class="activity-name" data-he="יום חופשי, שופינג" data-en="Free Day, Shopping">יום חופשי, שופינג</div>
+          <div class="activity-desc" data-he="חדר כושר, אוכל טעים, קניות" data-en="Gym, good food, shopping">חדר כושר, אוכל טעים, קניות</div>
         </div>
       </div>
       <div class="timeline-item transport stagger-3" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 16:00</div>
-          <div class="activity-name">Osaka → Tokyo</div>
+          <div class="activity-name" data-he="אוסקה → טוקיו" data-en="Osaka → Tokyo">אוסקה → טוקיו</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Pick up luggage from hotel lobby</span></div>
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Namba → Shin-Osaka — Midosuji Metro Line</span><span class="step-duration">~10 min</span></div>
@@ -1394,15 +1579,15 @@ body {
     <div class="city-divider-bg"></div><div class="city-divider-border"></div>
     <div class="city-divider-content">
       <span class="city-divider-emoji">🗼</span>
-      <div class="city-divider-name">חזרה לטוקיו</div>
-      <div class="city-divider-sub">הימים האחרונים</div>
+      <div class="city-divider-name" data-he="חזרה לטוקיו" data-en="Back to Tokyo">חזרה לטוקיו</div>
+      <div class="city-divider-sub" data-he="הימים האחרונים" data-en="The Final Days">הימים האחרונים</div>
     </div>
   </div>
 
   <!-- ═════ DAY 14 continued — Tokyo arrival ═════ -->
   <section class="day-section">
     <div class="hotel-banner" data-animate>
-      <div class="hotel-banner-label">🏨 מלון</div>
+      <div class="hotel-banner-label" data-he="🏨 מלון" data-en="🏨 Hotel">🏨 מלון</div>
       <div class="hotel-banner-name">Miyako City Tokyo Takanawa</div>
       <div class="hotel-banner-gym">💪 Gold's Gym Oimachi / Gold's Gym Gotanda (24/7)</div>
     </div>
@@ -1412,7 +1597,10 @@ body {
   <section class="day-section" id="day-15">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">15</div>
-      <div class="day-info"><div class="day-date">25.3 · יום רביעי</div><div class="day-city">קאוואגוצ׳יקו — הר פוג׳י 🗻</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="25.3 · יום רביעי" data-en="Mar 25 · Wednesday">25.3 · יום רביעי</div>
+        <div class="day-city" data-he="קאוואגוצ׳יקו — הר פוג׳י 🗻" data-en="Kawaguchiko — Mt. Fuji 🗻">קאוואגוצ׳יקו — הר פוג׳י 🗻</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item transport stagger-1" data-animate>
@@ -1430,12 +1618,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Chureito_Pagoda_and_Mount_Fuji_2023-03-07.jpg/960px-Chureito_Pagoda_and_Mount_Fuji_2023-03-07.jpg" alt="פגודת צ׳ורייטו">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Chureito_Pagoda_and_Mount_Fuji_2023-03-07.jpg/960px-Chureito_Pagoda_and_Mount_Fuji_2023-03-07.jpg" alt="Chureito Pagoda">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">09:30</div>
-            <div class="activity-name">⛩️ פגודת צ׳ורייטו (Chureito Pagoda)</div>
-            <div class="activity-desc">398 מדרגות לתצפית האייקונית — פגודה אדומה עם פוג׳י ברקע. 10 דק׳ הליכה מתחנת שימויושידה</div>
+            <div class="activity-name" data-he="⛩️ פגודת צ׳ורייטו" data-en="⛩️ Chureito Pagoda">⛩️ פגודת צ׳ורייטו</div>
+            <div class="activity-desc" data-he="398 מדרגות לתצפית האייקונית — פגודה אדומה עם פוג׳י ברקע. 10 דק׳ הליכה מתחנת שימויושידה" data-en="398 steps to the iconic viewpoint — red pagoda with Fuji in the background. 10 min walk from Shimoyoshida Station">398 מדרגות לתצפית האייקונית — פגודה אדומה עם פוג׳י ברקע. 10 דק׳ הליכה מתחנת שימויושידה</div>
           </div>
         </div>
       </div>
@@ -1453,12 +1641,12 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Lake_Kawaguchiko_Sakura_Mount_Fuji_4.JPG/960px-Lake_Kawaguchiko_Sakura_Mount_Fuji_4.JPG" alt="הר פוג׳י מקאוואגוצ׳יקו">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Lake_Kawaguchiko_Sakura_Mount_Fuji_4.JPG/960px-Lake_Kawaguchiko_Sakura_Mount_Fuji_4.JPG" alt="Mt. Fuji">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">11:00</div>
-            <div class="activity-name">🗻 תצפית הר פוג׳י מאגם קאוואגוצ׳י</div>
-            <div class="activity-desc">הנוף הקלאסי — הר פוג׳י משתקף באגם. טיילת לאורך הגדה הצפונית</div>
+            <div class="activity-name" data-he="🗻 תצפית הר פוג׳י מאגם קאוואגוצ׳י" data-en="🗻 Mt. Fuji View from Lake Kawaguchi">🗻 תצפית הר פוג׳י מאגם קאוואגוצ׳י</div>
+            <div class="activity-desc" data-he="הנוף הקלאסי — הר פוג׳י משתקף באגם. טיילת לאורך הגדה הצפונית" data-en="The classic view — Mt. Fuji reflected in the lake. Promenade along the northern shore">הנוף הקלאסי — הר פוג׳י משתקף באגם. טיילת לאורך הגדה הצפונית</div>
           </div>
         </div>
       </div>
@@ -1466,20 +1654,20 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card">
           <div class="activity-time">12:30</div>
-          <div class="activity-name">🍜 ארוחת צהריים — הוטו</div>
-          <div class="activity-desc">מרק אודון עבה מקומי (Hoto) — המנה המסורתית של אזור פוג׳י</div>
+          <div class="activity-name" data-he="🍜 ארוחת צהריים — הוטו" data-en="🍜 Lunch — Hōtō Noodles">🍜 ארוחת צהריים — הוטו</div>
+          <div class="activity-desc" data-he="מרק אודון עבה מקומי (Hoto) — המנה המסורתית של אזור פוג׳י" data-en="Thick local udon soup (Hōtō) — traditional dish of the Fuji region">מרק אודון עבה מקומי (Hoto) — המנה המסורתית של אזור פוג׳י</div>
         </div>
       </div>
       <div class="timeline-item has-img stagger-6" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card has-img">
           <div class="activity-img-wrap">
-            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Oshino-Hakkai-Nakaike.jpg/960px-Oshino-Hakkai-Nakaike.jpg" alt="אושינו האקאי">
+            <img class="activity-img" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Oshino-Hakkai-Nakaike.jpg/960px-Oshino-Hakkai-Nakaike.jpg" alt="Oshino Hakkai">
           </div>
           <div class="activity-card-body">
             <div class="activity-time">14:00</div>
-            <div class="activity-name">אושינו האקאי (Oshino Hakkai)</div>
-            <div class="activity-desc">שמונה בריכות מעיינות צלולות מרגליות הר פוג׳י, כפר מסורתי (~20 דק׳ אוטובוס מקאוואגוצ׳יקו)</div>
+            <div class="activity-name" data-he="אושינו האקאי" data-en="Oshino Hakkai">אושינו האקאי</div>
+            <div class="activity-desc" data-he="שמונה בריכות מעיינות צלולות מרגליות הר פוג׳י, כפר מסורתי (~20 דק׳ אוטובוס מקאוואגוצ׳יקו)" data-en="Eight crystal-clear spring ponds at Mt. Fuji's base, traditional village (~20 min bus from Kawaguchiko)">שמונה בריכות מעיינות צלולות מרגליות הר פוג׳י, כפר מסורתי (~20 דק׳ אוטובוס מקאוואגוצ׳יקו)</div>
           </div>
         </div>
       </div>
@@ -1487,7 +1675,7 @@ body {
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">🚃 16:30</div>
-          <div class="activity-name">Kawaguchiko → Tokyo</div>
+          <div class="activity-name" data-he="קאוואגוצ׳יקו → טוקיו" data-en="Kawaguchiko → Tokyo">קאוואגוצ׳יקו → טוקיו</div>
           <div class="route-steps">
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Kawaguchiko → Shinjuku — Fuji Excursion / Highway Bus</span><span class="step-duration">~2 hrs</span></div>
             <div class="route-step"><span class="step-icon">▶</span><span class="step-text">Arrive Tokyo ~18:30</span></div>
@@ -1501,14 +1689,17 @@ body {
   <section class="day-section" id="day-16">
     <div class="day-header"><div class="day-header-inner">
       <div class="day-number">16</div>
-      <div class="day-info"><div class="day-date">26.3 · יום חמישי</div><div class="day-city">טיסה הביתה ✈️</div></div>
+      <div class="day-info">
+        <div class="day-date" data-he="26.3 · יום חמישי" data-en="Mar 26 · Thursday">26.3 · יום חמישי</div>
+        <div class="day-city" data-he="טיסה הביתה ✈️" data-en="Flight Home ✈️">טיסה הביתה ✈️</div>
+      </div>
     </div></div>
     <div class="timeline">
       <div class="timeline-item transport stagger-1" data-animate>
         <div class="timeline-dot"></div>
         <div class="activity-card transport-card">
           <div class="activity-time">✈️ 17:00</div>
-          <div class="activity-name">Flight Home</div>
+          <div class="activity-name" data-he="טיסה הביתה" data-en="Flight Home">טיסה הביתה</div>
           <div class="route-steps">
             <div class="route-step" style="font-weight:600;color:var(--text-primary)"><span class="step-icon">▶</span><span class="step-text">Option A — From Haneda (HND)</span></div>
             <div class="route-step" style="padding-left:20px"><span class="step-icon">·</span><span class="step-text">Shinagawa → Haneda — Keikyu Line / Monorail</span><span class="step-duration">~20 min</span></div>
@@ -1525,45 +1716,102 @@ body {
   <!-- ═══════════════ FOOTER ═══════════════ -->
   <footer class="footer" data-animate>
     <span class="footer-emoji">🌸</span>
-    <div class="footer-text">16 ימים · 6 ערים · אינסוף זיכרונות</div>
+    <div class="footer-text" data-he="16 ימים · 6 ערים · אינסוף זיכרונות" data-en="16 days · 6 cities · endless memories">16 ימים · 6 ערים · אינסוף זיכרונות</div>
   </footer>
 </main>
 
 <!-- ═══════════════ BACK TO TOP ═══════════════ -->
-<a href="#hero" class="back-to-top" id="backToTop" aria-label="חזרה למעלה">↑</a>
+<a href="#hero" class="back-to-top" id="backToTop" aria-label="Back to top">↑</a>
 
 <!-- ═══════════════ JAVASCRIPT ═══════════════ -->
 <script>
 (function() {
   'use strict';
 
+  // ── State ──
+  var currentLang = localStorage.getItem('lang') || 'he';
+
+  // ── Language Switching ──
+  function setLanguage(lang) {
+    currentLang = lang;
+    var root = document.documentElement;
+    root.lang = lang;
+    root.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.title = lang === 'he' ? 'מסלול יפן' : 'Japan Itinerary';
+
+    // Add transition class
+    document.body.classList.add('lang-switching');
+
+    setTimeout(function() {
+      // Swap all translatable text
+      document.querySelectorAll('[data-' + lang + ']').forEach(function(el) {
+        var text = el.getAttribute('data-' + lang);
+        if (text !== null) el.textContent = text;
+      });
+
+      // Update toggle buttons
+      document.getElementById('btnHe').classList.toggle('active', lang === 'he');
+      document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+
+      // Remove transition class
+      setTimeout(function() {
+        document.body.classList.remove('lang-switching');
+      }, 50);
+    }, 250);
+
+    localStorage.setItem('lang', lang);
+  }
+
+  // ── Init language ──
+  if (currentLang !== 'he') {
+    setLanguage(currentLang);
+  }
+
+  // ── Language toggle event ──
+  document.getElementById('langToggle').addEventListener('click', function(e) {
+    var btn = e.target.closest('.lang-btn');
+    if (!btn || btn.classList.contains('active')) return;
+    setLanguage(btn.getAttribute('data-lang'));
+  });
+
   // ── Skeleton Loading ──
   window.addEventListener('load', function() {
     setTimeout(function() {
-      document.getElementById('skeleton').classList.add('hidden');
-      setTimeout(function() { document.getElementById('skeleton').style.display = 'none'; }, 800);
-    }, 1200);
+      var sk = document.getElementById('skeleton');
+      sk.classList.add('hidden');
+      setTimeout(function() { sk.style.display = 'none'; }, 1000);
+    }, 1400);
   });
 
   // ── Lazy image fade-in ──
   document.querySelectorAll('.activity-img').forEach(function(img) {
-    if (img.complete) { img.classList.add('loaded'); }
-    else { img.addEventListener('load', function() { this.classList.add('loaded'); }); }
+    if (img.complete && img.naturalWidth > 0) { img.classList.add('loaded'); }
+    else {
+      img.addEventListener('load', function() { this.classList.add('loaded'); });
+      img.addEventListener('error', function() { this.style.display = 'none'; });
+    }
   });
 
   // ── Intersection Observer for animations ──
   var animateEls = document.querySelectorAll('[data-animate]');
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
-      if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
     });
-  }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   animateEls.forEach(function(el) { observer.observe(el); });
 
-  // ── Scroll Progress Bar ──
+  // ── Scroll-driven effects ──
   var progressBar = document.getElementById('progressBar');
   var stickyNav = document.getElementById('stickyNav');
   var backToTop = document.getElementById('backToTop');
+  var daySections = document.querySelectorAll('.day-section[id]');
+  var navPills = document.querySelectorAll('.nav-pill');
+  var shapes = document.querySelectorAll('.parallax-shape');
+  var heroEl = document.getElementById('hero');
   var ticking = false;
 
   function onScroll() {
@@ -1571,11 +1819,37 @@ body {
       requestAnimationFrame(function() {
         var scrollTop = window.pageYOffset;
         var docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        progressBar.style.width = ((scrollTop / docHeight) * 100) + '%';
+
+        // Progress bar
+        if (docHeight > 0) {
+          progressBar.style.width = ((scrollTop / docHeight) * 100) + '%';
+        }
+
+        // Nav shadow
         stickyNav.classList.toggle('scrolled', scrollTop > 100);
-        backToTop.classList.toggle('visible', scrollTop > 600);
-        updateActiveNav();
-        updateParallax(scrollTop);
+
+        // Back to top
+        backToTop.classList.toggle('visible', scrollTop > 700);
+
+        // Active nav pill
+        updateActiveNav(scrollTop);
+
+        // Parallax shapes
+        shapes.forEach(function(shape) {
+          var speed = parseFloat(shape.getAttribute('data-speed'));
+          shape.style.transform = 'translateY(' + (-(scrollTop * speed)) + 'px)';
+        });
+
+        // Hero parallax — subtle zoom/fade on scroll
+        if (heroEl) {
+          var heroProgress = Math.min(scrollTop / (window.innerHeight * 0.7), 1);
+          heroEl.style.opacity = 1 - heroProgress * 0.5;
+          var heroContent = heroEl.querySelector('.hero-content');
+          if (heroContent) {
+            heroContent.style.transform = 'translateY(' + (scrollTop * 0.25) + 'px) scale(' + (1 - heroProgress * 0.05) + ')';
+          }
+        }
+
         ticking = false;
       });
       ticking = true;
@@ -1584,28 +1858,22 @@ body {
   window.addEventListener('scroll', onScroll, { passive: true });
 
   // ── Active Nav Pill ──
-  var daySections = document.querySelectorAll('.day-section[id]');
-  var navPills = document.querySelectorAll('.nav-pill');
-
-  function updateActiveNav() {
-    var scrollPos = window.pageYOffset + 120;
+  function updateActiveNav(scrollTop) {
+    var scrollPos = scrollTop + 140;
     var activeDay = null;
-    daySections.forEach(function(section) { if (section.offsetTop <= scrollPos) activeDay = section.id; });
+    daySections.forEach(function(section) {
+      if (section.offsetTop <= scrollPos) activeDay = section.id;
+    });
     navPills.forEach(function(pill) {
       var pillDay = 'day-' + pill.getAttribute('data-day');
       if (pillDay === activeDay) {
         pill.classList.add('active');
         var container = document.getElementById('navContainer');
-        container.scrollTo({ left: pill.offsetLeft - container.clientWidth / 2 + pill.clientWidth / 2, behavior: 'smooth' });
-      } else { pill.classList.remove('active'); }
-    });
-  }
-
-  // ── Parallax Shapes ──
-  var shapes = document.querySelectorAll('.parallax-shape');
-  function updateParallax(scrollTop) {
-    shapes.forEach(function(shape) {
-      shape.style.transform = 'translateY(' + (-(scrollTop * parseFloat(shape.getAttribute('data-speed')))) + 'px)';
+        var pillCenter = pill.offsetLeft - container.clientWidth / 2 + pill.clientWidth / 2;
+        container.scrollTo({ left: pillCenter, behavior: 'smooth' });
+      } else {
+        pill.classList.remove('active');
+      }
     });
   }
 
@@ -1614,10 +1882,42 @@ body {
     pill.addEventListener('click', function(e) {
       e.preventDefault();
       var target = document.querySelector(this.getAttribute('href'));
-      if (target) window.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' });
+      if (target) {
+        window.scrollTo({ top: target.offsetTop - 64, behavior: 'smooth' });
+      }
     });
   });
 
+  // ── Hero stat counter animation ──
+  function animateCounter(el, target, duration) {
+    var start = 0;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(start + (target - start) * eased);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Trigger counters when hero is visible
+  var counterObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var daysEl = document.getElementById('counterDays');
+        var citiesEl = document.getElementById('counterCities');
+        if (daysEl) animateCounter(daysEl, 16, 1500);
+        if (citiesEl) animateCounter(citiesEl, 6, 1200);
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  var heroContent = document.querySelector('.hero-content');
+  if (heroContent) counterObserver.observe(heroContent);
+
+  // ── Initial scroll state ──
   onScroll();
 })();
 </script>
