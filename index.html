@@ -206,13 +206,23 @@ body::after {
 @keyframes scrollBounce { 0%, 100% { transform: rotate(-45deg) translateY(0); opacity: 0.3; } 50% { transform: rotate(-45deg) translateY(8px); opacity: 1; } }
 
 /* ═══════════════════════════════════════════════
+   SAFE AREA TOP COVER (iOS status bar)
+   ═══════════════════════════════════════════════ */
+.safe-area-cover {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg); z-index: 101;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════
    STICKY NAV
    ═══════════════════════════════════════════════ */
 .sticky-nav {
   position: sticky; top: 0; z-index: 100;
   background: var(--bg);
   border-bottom: 1px solid var(--border); padding: 0;
-  padding-top: var(--safe-top);
+  padding-top: env(safe-area-inset-top, 0px);
   transition: all 0.4s var(--ease-apple);
 }
 .nav-inner {
@@ -535,6 +545,9 @@ body::after {
     <div class="skeleton-pulse sk-card-lg"></div>
   </div>
 </div>
+
+<!-- ═══════════════ SAFE AREA COVER ═══════════════ -->
+<div class="safe-area-cover"></div>
 
 <!-- ═══════════════ SCROLL PROGRESS ═══════════════ -->
 <div class="scroll-progress"><div class="scroll-progress-bar" id="progressBar"></div></div>
